@@ -9,37 +9,37 @@ import android.view.ViewParent;
 import com.wirelesspienetwork.overview.misc.OverviewConfiguration;
 
 class OverviewStackViewTouchHandler implements SwipeHelper.Callback {
-    static int INACTIVE_POINTER_ID = -1;
+    private static int INACTIVE_POINTER_ID = -1;
 
-    static final int TaskStackOverscrollRange = 150;
+    private static final int TaskStackOverscrollRange = 150;
 
-    OverviewConfiguration mConfig;
-    OverviewStackView mSv;
-    OverviewStackViewScroller mScroller;
-    VelocityTracker mVelocityTracker;
+    private OverviewConfiguration mConfig;
+    private OverviewStackView mSv;
+    private OverviewStackViewScroller mScroller;
+    private VelocityTracker mVelocityTracker;
 
-    boolean mIsScrolling;
+    private boolean mIsScrolling;
 
-    float mInitialP;
-    float mLastP;
-    float mTotalPMotion;
-    int mInitialMotionX, mInitialMotionY;
-    int mLastMotionX, mLastMotionY;
-    int mActivePointerId = INACTIVE_POINTER_ID;
-    OverviewCard mActiveTaskView = null;
+    private float mInitialP;
+    private float mLastP;
+    private float mTotalPMotion;
+    private int mInitialMotionX, mInitialMotionY;
+    private int mLastMotionX, mLastMotionY;
+    private int mActivePointerId = INACTIVE_POINTER_ID;
+    private OverviewCard mActiveTaskView = null;
 
-    int mMinimumVelocity;
-    int mMaximumVelocity;
+    private int mMinimumVelocity;
+    private int mMaximumVelocity;
     // The scroll touch slop is used to calculate when we start scrolling
-    int mScrollTouchSlop;
+    private int mScrollTouchSlop;
     // The page touch slop is used to calculate when we start swiping
-    float mPagingTouchSlop;
+    private float mPagingTouchSlop;
 
-    SwipeHelper mSwipeHelper;
-    boolean mInterceptedBySwipeHelper;
+    private SwipeHelper mSwipeHelper;
+    private boolean mInterceptedBySwipeHelper;
 
-    public OverviewStackViewTouchHandler(Context context, OverviewStackView sv,
-                                         OverviewConfiguration config, OverviewStackViewScroller scroller) {
+    OverviewStackViewTouchHandler(Context context, OverviewStackView sv,
+                                  OverviewConfiguration config, OverviewStackViewScroller scroller) {
         ViewConfiguration configuration = ViewConfiguration.get(context);
         mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
         mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
@@ -54,19 +54,19 @@ class OverviewStackViewTouchHandler implements SwipeHelper.Callback {
     }
 
     /** Velocity tracker helpers */
-    void initOrResetVelocityTracker() {
+    private void initOrResetVelocityTracker() {
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
         } else {
             mVelocityTracker.clear();
         }
     }
-    void initVelocityTrackerIfNotExists() {
+    private void initVelocityTrackerIfNotExists() {
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
         }
     }
-    void recycleVelocityTracker() {
+    private void recycleVelocityTracker() {
         if (mVelocityTracker != null) {
             mVelocityTracker.recycle();
             mVelocityTracker = null;
@@ -74,7 +74,7 @@ class OverviewStackViewTouchHandler implements SwipeHelper.Callback {
     }
 
     /** Returns the view at the specified coordinates */
-    OverviewCard findViewAtPoint(int x, int y) {
+    private OverviewCard findViewAtPoint(int x, int y) {
         int childCount = mSv.getChildCount();
         for (int i = childCount - 1; i >= 0; i--) {
             OverviewCard tv = (OverviewCard) mSv.getChildAt(i);
@@ -88,14 +88,14 @@ class OverviewStackViewTouchHandler implements SwipeHelper.Callback {
     }
 
     /** Constructs a simulated motion event for the current stack scroll. */
-    MotionEvent createMotionEventForStackScroll(MotionEvent ev) {
+    private MotionEvent createMotionEventForStackScroll(MotionEvent ev) {
         MotionEvent pev = MotionEvent.obtainNoHistory(ev);
         pev.setLocation(0, mScroller.progressToScrollRange(mScroller.getStackScroll()));
         return pev;
     }
 
     /** Touch preprocessing for handling below */
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
+    boolean onInterceptTouchEvent(MotionEvent ev) {
         // Return early if we have no children
         boolean hasChildren = (mSv.getChildCount() > 0);
         if (!hasChildren) {
@@ -171,7 +171,7 @@ class OverviewStackViewTouchHandler implements SwipeHelper.Callback {
     }
 
     /** Handles touch events once we have intercepted them */
-    public boolean onTouchEvent(MotionEvent ev) {
+    boolean onTouchEvent(MotionEvent ev) {
 
         // Short circuit if we have no children
         boolean hasChildren = (mSv.getChildCount() > 0);

@@ -4,13 +4,12 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9abd94d8-f585-4f73-91c4-913d7b8f543f" name="Default" comment="update Structure settings">
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/wirelesspienetwork/overviewexample/OverviewActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/wirelesspienetwork/overviewexample/OverviewActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/ObjectPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/ObjectPool.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/Overview.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/Overview.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewCard.java" afterDir="false" />
+    <list default="true" id="9abd94d8-f585-4f73-91c4-913d7b8f543f" name="Default" comment="clear up">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lib.iml" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lib.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewStackView.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewStackView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewStackViewScroller.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewStackViewScroller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewStackViewTouchHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewStackViewTouchHandler.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,7 +20,7 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="9bb41db8" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_2_API_28" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -253,7 +252,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

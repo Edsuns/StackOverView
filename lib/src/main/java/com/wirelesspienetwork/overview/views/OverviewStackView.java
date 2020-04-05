@@ -25,8 +25,8 @@ public class OverviewStackView extends FrameLayout implements OverviewAdapter.Ca
 
     /** The TaskView callbacks */
     interface Callbacks {
-        public void onCardDismissed(int position);
-        public void onAllCardsDismissed();
+        void onCardDismissed(int position);
+        void onAllCardsDismissed();
     }
 
     OverviewConfiguration mConfig;
