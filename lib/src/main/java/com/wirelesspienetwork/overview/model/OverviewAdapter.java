@@ -29,8 +29,8 @@ public abstract class OverviewAdapter<VH extends ViewHolder, Model extends Objec
 
     /** Task stack callbacks */
     public interface Callbacks {
-        public void onCardAdded(OverviewAdapter adapter, int position);
-        public void onCardRemoved(OverviewAdapter adapter, int position);
+        void onCardAdded(OverviewAdapter adapter, int position);
+        void onCardRemoved(OverviewAdapter adapter, int position);
     }
 
     Callbacks mCallbacks;
