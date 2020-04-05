@@ -26,3 +26,5 @@ proguard/
 # Log Files
 *.log
 /.idea/caches/
+/.idea/workspace.xml
+app/app.iml

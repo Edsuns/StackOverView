@@ -1,4 +1,11 @@
 # StackOverView
-a custom widget of android，like task manager of android 5.0.（Android 5.0 任务管理器控件）
+> 仿安卓5.0最近任务（后台管理）界面  
+> Mimic Task Recents Screen of Lollipop (Android 5.0 ~ Android 8.1)  
 
-<a href="http://s1060.photobucket.com/user/bossyao168/media/2015-04-03%2020_51_50_zpscduimbta.gif.html" target="_blank"><img src="http://i1060.photobucket.com/albums/t444/bossyao168/2015-04-03%2020_51_50_zpscduimbta.gif" border="0" alt=" photo 2015-04-03 20_51_50_zpscduimbta.gif"/></a>
+### Demo
+![Demo](./Demo.gif)
+
+### Dependents
+- Base on: [github.com/Bossyao168/StackOverView](https://github.com/Bossyao168/StackOverView)
+- Reference: [AOSP SystemUI](https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-cts-5.0_r4/packages/SystemUI/src/com/android/systemui/recents/)
+  

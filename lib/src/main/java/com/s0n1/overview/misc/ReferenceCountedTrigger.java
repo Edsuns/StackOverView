@@ -1,4 +1,4 @@
-package com.wirelesspienetwork.overview.misc;
+package com.s0n1.overview.misc;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wirelesspienetwork.overview.views;
+package com.s0n1.overview.views;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -23,45 +23,45 @@ import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.wirelesspienetwork.overview.misc.OverviewConfiguration;
-import com.wirelesspienetwork.overview.model.OverviewAdapter;
+import com.s0n1.overview.misc.OverViewConfiguration;
+import com.s0n1.overview.model.OverViewAdapter;
 
-public class Overview extends FrameLayout implements OverviewStackView.Callbacks {
+public class OverView extends FrameLayout implements OverViewStackView.Callbacks {
 
     public interface RecentsViewCallbacks {
         void onCardDismissed(int position);
         void onAllCardsDismissed();
     }
 
-    OverviewStackView mStackView;
-    OverviewConfiguration mConfig;
-    OverviewAdapter mAdapter;
+    OverViewStackView mStackView;
+    OverViewConfiguration mConfig;
+    OverViewAdapter mAdapter;
     RecentsViewCallbacks mCallbacks;
 
-    public Overview(Context context) {
+    public OverView(Context context) {
         super(context);
         init(context);
     }
 
-    public Overview(Context context, AttributeSet attrs) {
+    public OverView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public Overview(Context context, AttributeSet attrs, int defStyleAttr) {
+    public OverView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
     @TargetApi(21)
-    public Overview(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public OverView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context);
     }
 
     private void init(Context context)
     {
-        mConfig = new OverviewConfiguration(context);
+        mConfig = new OverViewConfiguration(context);
     }
 
     /** Sets the callbacks */
@@ -70,14 +70,14 @@ public class Overview extends FrameLayout implements OverviewStackView.Callbacks
     }
 
     /** Set/get the bsp root node */
-    public void setTaskStack(OverviewAdapter adapter) {
+    public void setTaskStack(OverViewAdapter adapter) {
 
         if (mStackView != null) {
             removeView(mStackView);
         }
 
         mAdapter = adapter;
-        mStackView = new OverviewStackView(getContext(), adapter, mConfig);
+        mStackView = new OverViewStackView(getContext(), adapter, mConfig);
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mStackView.setLayoutParams(params);
 

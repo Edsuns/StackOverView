@@ -1,4 +1,4 @@
-package com.wirelesspienetwork.overview.views;
+package com.s0n1.overview.views;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -7,16 +7,16 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.widget.OverScroller;
 
-import com.wirelesspienetwork.overview.misc.OverviewConfiguration;
+import com.s0n1.overview.misc.OverViewConfiguration;
 
 /* The scrolling logic for a TaskStackView */
-public class OverviewStackViewScroller {
+public class OverViewStackViewScroller {
     public interface Callbacks {
         void onScrollChanged(float p);
     }
 
-    OverviewConfiguration mConfig;
-    OverviewStackViewLayoutAlgorithm mLayoutAlgorithm;
+    OverViewConfiguration mConfig;
+    OverViewStackViewLayoutAlgorithm mLayoutAlgorithm;
     Callbacks mCb;
 
     float mStackScrollP;
@@ -24,7 +24,7 @@ public class OverviewStackViewScroller {
     OverScroller mScroller;
     ObjectAnimator mScrollAnimator;
 
-    public OverviewStackViewScroller(Context context, OverviewConfiguration config, OverviewStackViewLayoutAlgorithm layoutAlgorithm) {
+    public OverViewStackViewScroller(Context context, OverViewConfiguration config, OverViewStackViewLayoutAlgorithm layoutAlgorithm) {
         mConfig = config;
         mScroller = new OverScroller(context);
         mLayoutAlgorithm = layoutAlgorithm;

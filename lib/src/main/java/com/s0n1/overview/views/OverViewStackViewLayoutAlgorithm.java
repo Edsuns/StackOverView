@@ -1,19 +1,19 @@
-package com.wirelesspienetwork.overview.views;
+package com.s0n1.overview.views;
 
 import android.graphics.Rect;
 import android.util.Log;
 
-import com.wirelesspienetwork.overview.misc.OverviewConfiguration;
-import com.wirelesspienetwork.overview.misc.Utilities;
+import com.s0n1.overview.misc.OverViewConfiguration;
+import com.s0n1.overview.misc.Utilities;
 
 import java.util.HashMap;
 
-public class OverviewStackViewLayoutAlgorithm {
+public class OverViewStackViewLayoutAlgorithm {
 
     //最小卡片的显示比率
     static final float StackPeekMinScale = 0.8f; // The min scale of the last card in the peek area
 
-    OverviewConfiguration mConfig;
+    OverViewConfiguration mConfig;
 
     // The various rects that define the stack view
     Rect mViewRect = new Rect();
@@ -42,7 +42,7 @@ public class OverviewStackViewLayoutAlgorithm {
     //当前阶段总弧度，所占总体的百分比() （0->1）
     static float[] px;
 
-    public OverviewStackViewLayoutAlgorithm(OverviewConfiguration config) {
+    public OverViewStackViewLayoutAlgorithm(OverViewConfiguration config) {
         mConfig = config;
 
         // Precompute the path
@@ -131,8 +131,8 @@ public class OverviewStackViewLayoutAlgorithm {
      * @param prevTransform
      * @return
      */
-    public OverviewCardTransform getStackTransform(int position, float stackScroll, OverviewCardTransform transformOut,
-            OverviewCardTransform prevTransform) {
+    public OverViewCardTransform getStackTransform(int position, float stackScroll, OverViewCardTransform transformOut,
+                                                   OverViewCardTransform prevTransform) {
         // Return early if we have an invalid index
         if (!mTaskProgressMap.containsKey(position)) {
             transformOut.reset();
@@ -142,7 +142,7 @@ public class OverviewStackViewLayoutAlgorithm {
     }
 
     /** Update/get the transform */
-    public OverviewCardTransform getStackTransform(float taskProgress, float stackScroll, OverviewCardTransform transformOut, OverviewCardTransform prevTransform) {
+    public OverViewCardTransform getStackTransform(float taskProgress, float stackScroll, OverViewCardTransform transformOut, OverViewCardTransform prevTransform) {
         float pTaskRelative = taskProgress - stackScroll;
         float pBounded = Math.max(0, Math.min(pTaskRelative, 1f));
         // 大于1就说明已经扩大到屏幕外了 If the task top is outside of the bounds below the screen, then immediately reset it

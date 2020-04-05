@@ -1,50 +1,31 @@
-/*
- * Copyright (C) 2014 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
-package com.wirelesspienetwork.overview.model;
+package com.s0n1.overview.model;
 
 import android.content.Context;
 import android.view.ViewGroup;
 
-import com.wirelesspienetwork.overview.misc.OverviewConfiguration;
-import com.wirelesspienetwork.overview.views.OverviewCard;
+import com.s0n1.overview.misc.OverViewConfiguration;
+import com.s0n1.overview.views.OverViewCard;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class OverviewAdapter<VH extends ViewHolder, Model extends Object> {
+public abstract class OverViewAdapter<VH extends CardViewHolder, Model> {
 
     /** Task stack callbacks */
     public interface Callbacks {
-        void onCardAdded(OverviewAdapter adapter, int position);
-        void onCardRemoved(OverviewAdapter adapter, int position);
+        void onCardAdded(OverViewAdapter adapter, int position);
+        void onCardRemoved(OverViewAdapter adapter, int position);
     }
 
-    Callbacks mCallbacks;
+    private Callbacks mCallbacks;
 
     //这个只是单纯用来计数的
-    List<Model> mItems = new ArrayList <>();
+    private List<Model> mItems = new ArrayList <>();
 
-    public OverviewAdapter()
-    {
+    public OverViewAdapter() {}
 
-    }
-
-    public OverviewAdapter(List<Model> models)
-    {
+    protected OverViewAdapter(List<Model> models) {
         if (models != null) {
             mItems = models;
         }
@@ -60,8 +41,7 @@ public abstract class OverviewAdapter<VH extends ViewHolder, Model extends Objec
      * @param model 元素
      * @param position 位置
      */
-    public void notifyDataSetInserted(Model model, int position)
-    {
+    public void notifyDataSetInserted(Model model, int position) {
         if (position < 0 || position > mItems.size()) {
             throw new IllegalArgumentException("Position is out of bounds.");
         }
@@ -74,9 +54,8 @@ public abstract class OverviewAdapter<VH extends ViewHolder, Model extends Objec
     }
 
     /** Removes a task */
-    public void notifyDataSetRemoved(int position)
-    {
-        if (position < 0 || position > mItems.size()) {
+    public void notifyDataSetRemoved(int position) {
+        if (position < 0 || position >= mItems.size()) {
             throw new IllegalArgumentException("Position is out of bounds.");
         }
 
@@ -92,8 +71,7 @@ public abstract class OverviewAdapter<VH extends ViewHolder, Model extends Objec
      * 只不过是删除然后再重新添加罢了，来实现改变某项内容
      * @param newItems
      */
-    public void notifyDataSetChanged(List<Model> newItems)
-    {
+    public void notifyDataSetChanged(List<Model> newItems) {
         if (newItems == null) {
             newItems = new ArrayList<>();
         }
@@ -114,28 +92,28 @@ public abstract class OverviewAdapter<VH extends ViewHolder, Model extends Objec
 
     public List<Model> getData() { return mItems;}
 
-    public abstract VH onCreateViewHolder(Context context, ViewGroup parent);
+    public abstract VH onCreateCardHolder(Context context, ViewGroup parent);
 
     /**
      * This method is expected to populate the view in vh with the model in vh.
      */
-    public abstract void onBindViewHolder(VH vh);
+    public abstract void onBindCardHolder(VH vh);
 
     public final int getNumberOfItems() {
         return mItems.size();
     }
 
-    public final VH createViewHolder(Context context, OverviewConfiguration config) {
+    public final VH createCardHolder(Context context, OverViewConfiguration config) {
 
-        OverviewCard container = new OverviewCard(context);
+        OverViewCard container = new OverViewCard(context);
         container.setConfig(config);
-        VH vh = onCreateViewHolder(context, container);
+        VH vh = onCreateCardHolder(context, container);
         vh.setContainer(container);
         return vh;
     }
 
-    public final void bindViewHolder(VH vh, int position) {
+    public final void bindCardHolder(VH vh, int position) {
         vh.model = mItems.get(position);
-        onBindViewHolder(vh);
+        onBindCardHolder(vh);
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wirelesspienetwork.overview.misc;
+package com.s0n1.overview.misc;
 
 import android.graphics.Matrix;
 import android.graphics.Rect;

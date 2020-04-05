@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wirelesspienetwork.overview.views;
+package com.s0n1.overview.views;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -27,7 +27,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import com.wirelesspienetwork.overview.misc.OverviewConfiguration;
+import com.s0n1.overview.misc.OverViewConfiguration;
 
 /**
  * This class facilitates swipe to dismiss. It defines an interface to be implemented by the
@@ -66,10 +66,10 @@ public class SwipeHelper {
     public boolean mAllowSwipeTowardsStart = true;
     public boolean mAllowSwipeTowardsEnd = true;
 
-    OverviewConfiguration mConfig;
+    OverViewConfiguration mConfig;
 
     public SwipeHelper(int swipeDirection, Callback callback, float densityScale,
-            float pagingTouchSlop, OverviewConfiguration config) {
+            float pagingTouchSlop, OverViewConfiguration config) {
         mCallback = callback;
         mSwipeDirection = swipeDirection;
         mVelocityTracker = VelocityTracker.obtain();

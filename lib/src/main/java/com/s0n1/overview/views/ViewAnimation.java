@@ -1,8 +1,8 @@
-package com.wirelesspienetwork.overview.views;
+package com.s0n1.overview.views;
 
 import android.animation.ValueAnimator;
 import android.graphics.Rect;
-import com.wirelesspienetwork.overview.misc.ReferenceCountedTrigger;
+import com.s0n1.overview.misc.ReferenceCountedTrigger;
 
 public class ViewAnimation {
 
@@ -20,7 +20,7 @@ public class ViewAnimation {
         // The task rect for the current stack
         Rect currentTaskRect;
         // The transform of the current task view
-        OverviewCardTransform currentTaskTransform;
+        OverViewCardTransform currentTaskTransform;
         // The view index of the current task view
         int currentStackViewIndex;
         // The total number of task views

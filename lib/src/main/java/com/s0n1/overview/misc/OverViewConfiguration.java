@@ -1,4 +1,4 @@
-package com.wirelesspienetwork.overview.misc;
+package com.s0n1.overview.misc;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -8,9 +8,9 @@ import android.util.TypedValue;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
-import com.wirelesspienetwork.overview.R;
+import com.s0n1.overview.R;
 
-public class OverviewConfiguration {
+public class OverViewConfiguration {
 
     /** Interpolators */
     public Interpolator fastOutSlowInInterpolator;
@@ -38,7 +38,7 @@ public class OverviewConfiguration {
     public int taskViewTranslationZMaxPx;
 
     /** Private constructor */
-    public OverviewConfiguration(Context context) {
+    public OverViewConfiguration(Context context) {
         fastOutSlowInInterpolator = AnimationUtils.loadInterpolator(context,
                 android.R.interpolator.accelerate_decelerate);
         fastOutLinearInInterpolator = AnimationUtils.loadInterpolator(context,

@@ -1,11 +1,11 @@
-package com.wirelesspienetwork.overview.views;
+package com.s0n1.overview.views;
 
 import android.content.Context;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class ObjectPool<V, T> {
+class ObjectPool<V, T> {
 
     public interface ObjectPoolConsumer<V, T> {
         V createObject(Context context);
@@ -19,7 +19,7 @@ public class ObjectPool<V, T> {
     private LinkedList<V> mPool = new LinkedList<>();
 
     /** Initializes the pool with a fixed predetermined pool size */
-    public ObjectPool(Context context, ObjectPoolConsumer<V, T> objectCreator) {
+    ObjectPool(Context context, ObjectPoolConsumer<V, T> objectCreator) {
         mContext = context;
         mObjectCreator = objectCreator;
     }

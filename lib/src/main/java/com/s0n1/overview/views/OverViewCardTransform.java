@@ -1,4 +1,4 @@
-package com.wirelesspienetwork.overview.views;
+package com.s0n1.overview.views;
 
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
@@ -10,7 +10,7 @@ import android.view.animation.Interpolator;
 
 
 /* The transform state for a task view */
-public class OverviewCardTransform {
+public class OverViewCardTransform {
     public int startDelay = 0;
     public int translationY = 0;
     public float translationZ = 0;
@@ -20,11 +20,11 @@ public class OverviewCardTransform {
     public Rect rect = new Rect();
     float p = 0f;
 
-    public OverviewCardTransform() {
+    public OverViewCardTransform() {
         // Do nothing
     }
 
-    public OverviewCardTransform(OverviewCardTransform o) {
+    public OverViewCardTransform(OverViewCardTransform o) {
         startDelay = o.startDelay;
         translationY = o.translationY;
         translationZ = o.translationZ;

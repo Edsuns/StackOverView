@@ -1,20 +1,20 @@
-package com.wirelesspienetwork.overview.model;
+package com.s0n1.overview.model;
 
 import android.view.View;
 
-import com.wirelesspienetwork.overview.views.OverviewCard;
+import com.s0n1.overview.views.OverViewCard;
 
-public class ViewHolder<V extends View, Model extends Object>
+public class CardViewHolder<V extends View, Model extends Object>
 {
     public final V itemView;
     public Model model;
 
-    private OverviewCard mContainer;
+    private OverViewCard mContainer;
 
     private int mCurrentPosition = -1;
     private int mLastPosition = -1;
 
-    public ViewHolder(V view)
+    public CardViewHolder(V view)
     {
         this.itemView = view;
     }
@@ -32,12 +32,12 @@ public class ViewHolder<V extends View, Model extends Object>
         return mLastPosition;
     }
 
-    public OverviewCard getContainer()
+    public OverViewCard getContainer()
     {
         return mContainer;
     }
 
-    protected void setContainer(OverviewCard container) {
+    protected void setContainer(OverViewCard container) {
         if (mContainer != null) {
             mContainer.setContent(null);
         }
