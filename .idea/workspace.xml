@@ -4,20 +4,13 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9abd94d8-f585-4f73-91c4-913d7b8f543f" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StackOverView.iml" beforeDir="false" afterPath="$PROJECT_DIR$/StackOverView.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/lib/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/lib.iml" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lib.iml" afterDir="false" />
+    <list default="true" id="9abd94d8-f585-4f73-91c4-913d7b8f543f" name="Default" comment="update Structure settings">
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/wirelesspienetwork/overviewexample/OverviewActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/wirelesspienetwork/overviewexample/OverviewActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/ObjectPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/ObjectPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/Overview.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/Overview.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewStackView.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewStackView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewStackViewScroller.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/wirelesspienetwork/overview/views/OverviewStackViewScroller.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

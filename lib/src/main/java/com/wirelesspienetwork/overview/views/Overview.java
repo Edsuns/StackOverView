@@ -24,14 +24,13 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.wirelesspienetwork.overview.misc.OverviewConfiguration;
-import com.wirelesspienetwork.overview.misc.ReferenceCountedTrigger;
 import com.wirelesspienetwork.overview.model.OverviewAdapter;
 
 public class Overview extends FrameLayout implements OverviewStackView.Callbacks {
 
     public interface RecentsViewCallbacks {
-        public void onCardDismissed(int position);
-        public void onAllCardsDismissed();
+        void onCardDismissed(int position);
+        void onAllCardsDismissed();
     }
 
     OverviewStackView mStackView;
@@ -83,8 +82,8 @@ public class Overview extends FrameLayout implements OverviewStackView.Callbacks
         mStackView.setLayoutParams(params);
 
         mStackView.setCallbacks(this);
-        mStackView.setAlpha(0);
-        mStackView.animate().alpha(1.f).setStartDelay(2000).setDuration(3500).start();
+//        mStackView.setAlpha(0);
+//        mStackView.animate().alpha(1.f).setStartDelay(2000).setDuration(3500).start();
 
         //所以说 OverviewStackView 才是重点
         addView(mStackView);

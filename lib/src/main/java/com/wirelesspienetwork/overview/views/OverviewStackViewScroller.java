@@ -12,7 +12,7 @@ import com.wirelesspienetwork.overview.misc.OverviewConfiguration;
 /* The scrolling logic for a TaskStackView */
 public class OverviewStackViewScroller {
     public interface Callbacks {
-        public void onScrollChanged(float p);
+        void onScrollChanged(float p);
     }
 
     OverviewConfiguration mConfig;

@@ -1,6 +1,7 @@
 package com.wirelesspienetwork.overview.views;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Build;
@@ -248,6 +249,7 @@ public class OverviewStackView extends FrameLayout implements OverviewAdapter.Ca
         mOverviewStackBounds.set(r);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void setOnTouchListener(OnTouchListener l) {
         super.setOnTouchListener(l);
@@ -269,6 +271,7 @@ public class OverviewStackView extends FrameLayout implements OverviewAdapter.Ca
         return mTouchHandler.onInterceptTouchEvent(ev);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         return mTouchHandler.onTouchEvent(ev);
@@ -441,7 +444,7 @@ public class OverviewStackView extends FrameLayout implements OverviewAdapter.Ca
         // Notify the callback that we've removed the task and it can clean up after it
         mCb.onCardDismissed(removedTask);
 
-        if (tv != null) {
+        if (tv != null && holder!=null) {
             holder.setPosition(-1);
             mViewPool.returnObjectToPool(holder);
         }
@@ -488,8 +491,10 @@ public class OverviewStackView extends FrameLayout implements OverviewAdapter.Ca
     public void onCardDismissed(OverviewCard tv) {
 
         ViewHolder vh = mViewHolderMap.get(tv);
-        int taskIndex = vh.getPosition();
-        mStack.notifyDataSetRemoved(taskIndex);
+        if (vh!=null) {
+            int taskIndex = vh.getPosition();
+            mStack.notifyDataSetRemoved(taskIndex);
+        }
     }
 
     @Override
@@ -525,7 +530,7 @@ public class OverviewStackView extends FrameLayout implements OverviewAdapter.Ca
             for (int i = 0; i < childCount; i++) {
                 OverviewCard insertTV = (OverviewCard)getChildAt(i);
                 ViewHolder holder = mViewHolderMap.get(insertTV);
-                if (taskIndex < holder.getPosition()) {
+                if (holder!=null && taskIndex < holder.getPosition()) {
                     insertIndex = i;
                     break;
                 }

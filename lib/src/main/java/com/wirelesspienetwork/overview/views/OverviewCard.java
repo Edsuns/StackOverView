@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.wirelesspienetwork.overview.R;
 import com.wirelesspienetwork.overview.misc.OverviewConfiguration;
 
 /* A task view */
@@ -195,7 +194,7 @@ public class OverviewCard extends FrameLayout {
 
     /** Sets the current task progress. */
     public void setTaskProgress(float p) {
-        mTaskProgress = p;;
+        mTaskProgress = p;
     }
 
     /** Returns the current task progress. */

@@ -8,15 +8,15 @@ import java.util.LinkedList;
 public class ObjectPool<V, T> {
 
     public interface ObjectPoolConsumer<V, T> {
-        public V createObject(Context context);
-        public void prepareObjectToEnterPool(V v);
-        public void prepareObjectToLeavePool(V v, T prepareData, boolean isNewObject);
-        public boolean hasPreferredData(V v, T preferredData);
+        V createObject(Context context);
+        void prepareObjectToEnterPool(V v);
+        void prepareObjectToLeavePool(V v, T prepareData, boolean isNewObject);
+        boolean hasPreferredData(V v, T preferredData);
     }
 
-    Context mContext;
-    ObjectPoolConsumer<V, T> mObjectCreator;
-    LinkedList<V> mPool = new LinkedList<V>();
+    private Context mContext;
+    private ObjectPoolConsumer<V, T> mObjectCreator;
+    private LinkedList<V> mPool = new LinkedList<>();
 
     /** Initializes the pool with a fixed predetermined pool size */
     public ObjectPool(Context context, ObjectPoolConsumer<V, T> objectCreator) {
