@@ -10,13 +10,13 @@ import android.widget.OverScroller;
 import com.s0n1.overview.misc.OverViewConfiguration;
 
 /* The scrolling logic for a TaskStackView */
-public class OverViewStackViewScroller {
+public class StackViewScroller {
     public interface Callbacks {
         void onScrollChanged(float p);
     }
 
     OverViewConfiguration mConfig;
-    OverViewStackViewLayoutAlgorithm mLayoutAlgorithm;
+    StackViewLayoutAlgorithm mLayoutAlgorithm;
     Callbacks mCb;
 
     float mStackScrollP;
@@ -24,7 +24,7 @@ public class OverViewStackViewScroller {
     OverScroller mScroller;
     ObjectAnimator mScrollAnimator;
 
-    public OverViewStackViewScroller(Context context, OverViewConfiguration config, OverViewStackViewLayoutAlgorithm layoutAlgorithm) {
+    public StackViewScroller(Context context, OverViewConfiguration config, StackViewLayoutAlgorithm layoutAlgorithm) {
         mConfig = config;
         mScroller = new OverScroller(context);
         mLayoutAlgorithm = layoutAlgorithm;

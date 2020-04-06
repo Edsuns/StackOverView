@@ -24,18 +24,18 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.s0n1.overview.misc.OverViewConfiguration;
-import com.s0n1.overview.model.OverViewAdapter;
+import com.s0n1.overview.model.StackViewAdapter;
 
-public class OverView extends FrameLayout implements OverViewStackView.Callbacks {
+public class OverView extends FrameLayout implements StackView.Callbacks {
 
     public interface RecentsViewCallbacks {
         void onCardDismissed(int position);
         void onAllCardsDismissed();
     }
 
-    OverViewStackView mStackView;
+    StackView mStackView;
     OverViewConfiguration mConfig;
-    OverViewAdapter mAdapter;
+    StackViewAdapter mAdapter;
     RecentsViewCallbacks mCallbacks;
 
     public OverView(Context context) {
@@ -70,14 +70,14 @@ public class OverView extends FrameLayout implements OverViewStackView.Callbacks
     }
 
     /** Set/get the bsp root node */
-    public void setTaskStack(OverViewAdapter adapter) {
+    public void setTaskStack(StackViewAdapter adapter) {
 
         if (mStackView != null) {
             removeView(mStackView);
         }
 
         mAdapter = adapter;
-        mStackView = new OverViewStackView(getContext(), adapter, mConfig);
+        mStackView = new StackView(getContext(), adapter, mConfig);
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mStackView.setLayoutParams(params);
 

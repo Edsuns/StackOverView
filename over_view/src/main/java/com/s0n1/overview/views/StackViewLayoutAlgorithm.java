@@ -8,7 +8,7 @@ import com.s0n1.overview.misc.Utilities;
 
 import java.util.HashMap;
 
-public class OverViewStackViewLayoutAlgorithm {
+public class StackViewLayoutAlgorithm {
 
     //最小卡片的显示比率
     static final float StackPeekMinScale = 0.8f; // The min scale of the last card in the peek area
@@ -42,7 +42,7 @@ public class OverViewStackViewLayoutAlgorithm {
     //当前阶段总弧度，所占总体的百分比() （0->1）
     static float[] px;
 
-    public OverViewStackViewLayoutAlgorithm(OverViewConfiguration config) {
+    public StackViewLayoutAlgorithm(OverViewConfiguration config) {
         mConfig = config;
 
         // Precompute the path
@@ -131,8 +131,8 @@ public class OverViewStackViewLayoutAlgorithm {
      * @param prevTransform
      * @return
      */
-    public OverViewCardTransform getStackTransform(int position, float stackScroll, OverViewCardTransform transformOut,
-                                                   OverViewCardTransform prevTransform) {
+    public StackViewCardTransform getStackTransform(int position, float stackScroll, StackViewCardTransform transformOut,
+                                                    StackViewCardTransform prevTransform) {
         // Return early if we have an invalid index
         if (!mTaskProgressMap.containsKey(position)) {
             transformOut.reset();
@@ -142,7 +142,7 @@ public class OverViewStackViewLayoutAlgorithm {
     }
 
     /** Update/get the transform */
-    public OverViewCardTransform getStackTransform(float taskProgress, float stackScroll, OverViewCardTransform transformOut, OverViewCardTransform prevTransform) {
+    public StackViewCardTransform getStackTransform(float taskProgress, float stackScroll, StackViewCardTransform transformOut, StackViewCardTransform prevTransform) {
         float pTaskRelative = taskProgress - stackScroll;
         float pBounded = Math.max(0, Math.min(pTaskRelative, 1f));
         // 大于1就说明已经扩大到屏幕外了 If the task top is outside of the bounds below the screen, then immediately reset it

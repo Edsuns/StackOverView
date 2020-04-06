@@ -20,6 +20,6 @@ android {
     }
 
     dependencies {
-        implementation project(':lib')
+        implementation project(':over_view')
     }
 }

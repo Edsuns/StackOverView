@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import com.s0n1.overview.misc.OverViewConfiguration;
 
 /* A task view */
-public class OverViewCard extends FrameLayout {
+public class StackViewCard extends FrameLayout {
 
     OverViewConfiguration mConfig;
 
@@ -35,23 +35,23 @@ public class OverViewCard extends FrameLayout {
             };
 
 
-    public OverViewCard(Context context) {
+    public StackViewCard(Context context) {
         super(context);
         init(context);
     }
 
-    public OverViewCard(Context context, AttributeSet attrs) {
+    public StackViewCard(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public OverViewCard(Context context, AttributeSet attrs, int defStyleAttr) {
+    public StackViewCard(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
     @TargetApi(21)
-    public OverViewCard(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public StackViewCard(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context);
     }
@@ -113,11 +113,11 @@ public class OverViewCard extends FrameLayout {
     }
 
     /** Synchronizes this view's properties with the task's transform */
-    void updateViewPropertiesToCardTransform(OverViewCardTransform toTransform, int duration) {
+    void updateViewPropertiesToCardTransform(StackViewCardTransform toTransform, int duration) {
         updateViewPropertiesToCardTransform(toTransform, duration, null);
     }
 
-    void updateViewPropertiesToCardTransform(OverViewCardTransform toTransform, int duration,
+    void updateViewPropertiesToCardTransform(StackViewCardTransform toTransform, int duration,
                                              ValueAnimator.AnimatorUpdateListener updateCallback) {
         // Apply the transform
         toTransform.applyToTaskView(this, duration, mConfig.fastOutSlowInInterpolator, false,
@@ -140,7 +140,7 @@ public class OverViewCard extends FrameLayout {
 
     /** Resets this view's properties */
     void resetViewProperties() {
-        OverViewCardTransform.reset(this);
+        StackViewCardTransform.reset(this);
     }
 
     /** Prepares this task view for the enter-recents animations.  This is called earlier in the
@@ -150,7 +150,7 @@ public class OverViewCard extends FrameLayout {
 
     /** Animates this task view as it enters recents */
     void startEnterRecentsAnimation(final ViewAnimation.OverviewCardEnterContext ctx) {
-        final OverViewCardTransform transform = ctx.currentTaskTransform;
+        final StackViewCardTransform transform = ctx.currentTaskTransform;
 
         // Animate the tasks up
         int frontIndex = (ctx.currentStackViewCount - ctx.currentStackViewIndex - 1);

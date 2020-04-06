@@ -10,7 +10,7 @@ import android.view.animation.Interpolator;
 
 
 /* The transform state for a task view */
-public class OverViewCardTransform {
+public class StackViewCardTransform {
     public int startDelay = 0;
     public int translationY = 0;
     public float translationZ = 0;
@@ -20,11 +20,11 @@ public class OverViewCardTransform {
     public Rect rect = new Rect();
     float p = 0f;
 
-    public OverViewCardTransform() {
+    public StackViewCardTransform() {
         // Do nothing
     }
 
-    public OverViewCardTransform(OverViewCardTransform o) {
+    public StackViewCardTransform(StackViewCardTransform o) {
         startDelay = o.startDelay;
         translationY = o.translationY;
         translationZ = o.translationZ;

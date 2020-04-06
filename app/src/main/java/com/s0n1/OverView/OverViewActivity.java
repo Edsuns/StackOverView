@@ -15,8 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.s0n1.overview.misc.Utilities;
-import com.s0n1.overview.model.OverViewAdapter;
-import com.s0n1.overview.model.CardViewHolder;
+import com.s0n1.overview.model.StackViewAdapter;
+import com.s0n1.overview.model.StackViewCardHolder;
 import com.s0n1.overview.views.OverView;
 
 import java.lang.reflect.InvocationTargetException;
@@ -84,16 +84,16 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
             models.add(color);
         }
 
-        final OverViewAdapter stack =
-                new OverViewAdapter<CardViewHolder<View, Integer>, Integer>(models) {
+        final StackViewAdapter stack =
+                new StackViewAdapter<StackViewCardHolder<View, Integer>, Integer>(models) {
             @Override
-            public CardViewHolder<View, Integer> onCreateCardHolder(Context context, ViewGroup parent) {
+            public StackViewCardHolder<View, Integer> onCreateCardHolder(Context context, ViewGroup parent) {
                 View v = View.inflate(context, R.layout.recents_dummy, null);
-                return new CardViewHolder<>(v);
+                return new StackViewCardHolder<>(v);
             }
 
             @Override
-            public void onBindCardHolder(CardViewHolder<View, Integer> cardHolder) {
+            public void onBindCardHolder(StackViewCardHolder<View, Integer> cardHolder) {
                 final int position = cardHolder.getPosition();
                 View view = cardHolder.itemView;
                 ((View)view.getParent()).setBackgroundColor(cardHolder.model);

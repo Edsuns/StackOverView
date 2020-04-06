@@ -5,6 +5,9 @@
 ### Demo
 ![Demo](./Demo.gif)
 
+### Features
+- Custom StackViewCard layout (See the sample codes)
+
 ### Dependents
 - Base on: [github.com/Bossyao168/StackOverView](https://github.com/Bossyao168/StackOverView)
 - Reference: [AOSP SystemUI](https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-cts-5.0_r4/packages/SystemUI/src/com/android/systemui/recents/)

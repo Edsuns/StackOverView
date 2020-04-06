@@ -5,17 +5,17 @@ import android.content.Context;
 import android.view.ViewGroup;
 
 import com.s0n1.overview.misc.OverViewConfiguration;
-import com.s0n1.overview.views.OverViewCard;
+import com.s0n1.overview.views.StackViewCard;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class OverViewAdapter<VH extends CardViewHolder, Model> {
+public abstract class StackViewAdapter<VH extends StackViewCardHolder, Model> {
 
     /** Task stack callbacks */
     public interface Callbacks {
-        void onCardAdded(OverViewAdapter adapter, int position);
-        void onCardRemoved(OverViewAdapter adapter, int position);
+        void onCardAdded(StackViewAdapter adapter, int position);
+        void onCardRemoved(StackViewAdapter adapter, int position);
     }
 
     private Callbacks mCallbacks;
@@ -23,9 +23,9 @@ public abstract class OverViewAdapter<VH extends CardViewHolder, Model> {
     //这个只是单纯用来计数的
     private List<Model> mItems = new ArrayList <>();
 
-    public OverViewAdapter() {}
+    public StackViewAdapter() {}
 
-    protected OverViewAdapter(List<Model> models) {
+    protected StackViewAdapter(List<Model> models) {
         if (models != null) {
             mItems = models;
         }
@@ -105,7 +105,7 @@ public abstract class OverViewAdapter<VH extends CardViewHolder, Model> {
 
     public final VH createCardHolder(Context context, OverViewConfiguration config) {
 
-        OverViewCard container = new OverViewCard(context);
+        StackViewCard container = new StackViewCard(context);
         container.setConfig(config);
         VH vh = onCreateCardHolder(context, container);
         vh.setContainer(container);

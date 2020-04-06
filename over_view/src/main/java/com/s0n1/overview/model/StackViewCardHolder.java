@@ -2,19 +2,19 @@ package com.s0n1.overview.model;
 
 import android.view.View;
 
-import com.s0n1.overview.views.OverViewCard;
+import com.s0n1.overview.views.StackViewCard;
 
-public class CardViewHolder<V extends View, Model extends Object>
+public class StackViewCardHolder<V extends View, Model extends Object>
 {
     public final V itemView;
     public Model model;
 
-    private OverViewCard mContainer;
+    private StackViewCard mContainer;
 
     private int mCurrentPosition = -1;
     private int mLastPosition = -1;
 
-    public CardViewHolder(V view)
+    public StackViewCardHolder(V view)
     {
         this.itemView = view;
     }
@@ -32,12 +32,12 @@ public class CardViewHolder<V extends View, Model extends Object>
         return mLastPosition;
     }
 
-    public OverViewCard getContainer()
+    public StackViewCard getContainer()
     {
         return mContainer;
     }
 
-    protected void setContainer(OverViewCard container) {
+    protected void setContainer(StackViewCard container) {
         if (mContainer != null) {
             mContainer.setContent(null);
         }

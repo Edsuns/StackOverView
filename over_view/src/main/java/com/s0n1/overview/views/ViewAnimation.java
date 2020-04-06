@@ -20,7 +20,7 @@ public class ViewAnimation {
         // The task rect for the current stack
         Rect currentTaskRect;
         // The transform of the current task view
-        OverViewCardTransform currentTaskTransform;
+        StackViewCardTransform currentTaskTransform;
         // The view index of the current task view
         int currentStackViewIndex;
         // The total number of task views
