@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -29,6 +32,9 @@ import java.util.Random;
 public class OverViewActivity extends Activity implements OverView.RecentsViewCallbacks {
     // Top level views
     OverView mRecentsView;
+
+    ArrayList<Integer> models;
+    StackViewAdapter stack;
 
     /** Called with the activity is first created. */
     @Override
@@ -51,14 +57,14 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(SearchManager.INTENT_GLOBAL_SEARCH_ACTIVITY_CHANGED);
 
-        // Private API calls to make the shadows look better
-        try {
-            Utilities.setShadowProperty("ambientRatio", String.valueOf(1.5f));
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+//        // Private API calls to make the shadows look better
+//        try {
+//            Utilities.setShadowProperty("ambientRatio", String.valueOf(1.5f));
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        } catch (InvocationTargetException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -76,7 +82,7 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
     protected void onResume() {
         super.onResume();
 
-        ArrayList<Integer> models = new ArrayList<>();
+        models = new ArrayList<>();
         for(int i = 0; i < 10; ++i) {
             Random random = new Random();
             random.setSeed(i);
@@ -84,8 +90,7 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
             models.add(color);
         }
 
-        final StackViewAdapter stack =
-                new StackViewAdapter<StackViewCardHolder<View, Integer>, Integer>(models) {
+        stack = new StackViewAdapter<StackViewCardHolder<View, Integer>, Integer>(models) {
             @Override
             public StackViewCardHolder<View, Integer> onCreateCardHolder(Context context, ViewGroup parent) {
                 View v = View.inflate(context, R.layout.recents_dummy, null);
@@ -120,6 +125,21 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        menu.findItem(R.id.add_card).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                models.add(Color.argb(255,251,192,45));
+                mRecentsView.setTaskStack(stack);
+                return true;
+            }
+        });
+        return true;
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
     }
@@ -135,10 +155,11 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
 
     @Override
     public void onAllCardsDismissed() {
+        Toast.makeText(this,"All Cards Dismissed",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onCardDismissed(int position) {
-        Toast.makeText(this,"Dismiss: "+position,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"Dismissed: "+position,Toast.LENGTH_SHORT).show();
     }
 }

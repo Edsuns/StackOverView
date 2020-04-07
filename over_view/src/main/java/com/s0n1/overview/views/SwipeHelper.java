@@ -48,12 +48,12 @@ public class SwipeHelper {
 
     public static float ALPHA_FADE_START = 0.15f; // fraction of thumbnail width
                                                  // where fade starts
-    static final float ALPHA_FADE_END = 0.65f; // fraction of thumbnail width
+    private static final float ALPHA_FADE_END = 0.65f; // fraction of thumbnail width
                                               // beyond which alpha->0
     private float mMinAlpha = 0f;
 
     private float mPagingTouchSlop;
-    Callback mCallback;
+    private Callback mCallback;
     private int mSwipeDirection;
     private VelocityTracker mVelocityTracker;
 
@@ -66,7 +66,7 @@ public class SwipeHelper {
     public boolean mAllowSwipeTowardsStart = true;
     public boolean mAllowSwipeTowardsEnd = true;
 
-    OverViewConfiguration mConfig;
+    private OverViewConfiguration mConfig;
 
     public SwipeHelper(int swipeDirection, Callback callback, float densityScale,
             float pagingTouchSlop, OverViewConfiguration config) {
@@ -282,6 +282,7 @@ public class SwipeHelper {
                 amount = maxScrollDistance * (float) Math.sin((amount/size)*(Math.PI/2));
             }
         }
+        ((View)mCurrView.getParent()).invalidate();// 修复 首次左右滑动，卡片被裁切
         setTranslation(mCurrView, amount);
         float alpha = getAlphaForOffset(mCurrView);
         mCurrView.setAlpha(alpha);

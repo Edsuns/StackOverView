@@ -11,9 +11,9 @@ import java.util.HashMap;
 public class StackViewLayoutAlgorithm {
 
     //最小卡片的显示比率
-    static final float StackPeekMinScale = 0.8f; // The min scale of the last card in the peek area
+    private static final float StackPeekMinScale = 0.8f; // The min scale of the last card in the peek area
 
-    OverViewConfiguration mConfig;
+    private OverViewConfiguration mConfig;
 
     // The various rects that define the stack view
     Rect mViewRect = new Rect();
@@ -25,22 +25,22 @@ public class StackViewLayoutAlgorithm {
     float mMinScrollP;
     float mMaxScrollP;
     float mInitialScrollP;
-    int mWithinAffiliationOffset;
-    int mBetweenAffiliationOffset;
+    private int mWithinAffiliationOffset;
+    private int mBetweenAffiliationOffset;
 
     //存放个个cardview的比率
-    HashMap<Integer, Float> mTaskProgressMap = new HashMap<Integer, Float>();
+    private HashMap<Integer, Float> mTaskProgressMap = new HashMap<>();
 
     // Log function
-    static final float XScale = 1.75f;  // The large the XScale, the longer the flat area of the curve
-    static final float LogBase = 3000;
-    static final int PrecisionSteps = 250;
+    private static final float XScale = 1.75f;  // The large the XScale, the longer the flat area of the curve
+    private static final float LogBase = 3000;
+    private static final int PrecisionSteps = 250;
 
     //xp[PrecisionSteps] 这个是每段x的平均渐进累加值，与弧度渐进值的靠近比率。也就是说会越来越快
-    static float[] xp;
+    private static float[] xp;
 
     //当前阶段总弧度，所占总体的百分比() （0->1）
-    static float[] px;
+    private static float[] px;
 
     public StackViewLayoutAlgorithm(OverViewConfiguration config) {
         mConfig = config;

@@ -67,28 +67,28 @@ public abstract class StackViewAdapter<VH extends StackViewCardHolder, Model> {
         }
     }
 
-    /**
-     * 只不过是删除然后再重新添加罢了，来实现改变某项内容
-     * @param newItems
-     */
-    public void notifyDataSetChanged(List<Model> newItems) {
-        if (newItems == null) {
-            newItems = new ArrayList<>();
-        }
-
-        for(int i = 0; i < mItems.size(); ++i)
-        {
-            if (mCallbacks != null) {
-                mCallbacks.onCardRemoved(this, i);
-            }
-        }
-
-        for(int i =0; i < newItems.size(); ++i) {
-            if (mCallbacks != null) {
-                mCallbacks.onCardAdded(this, i);
-            }
-        }
-    }
+//    /**
+//     * 只不过是删除然后再重新添加罢了，来实现改变某项内容
+//     * @param newItems
+//     */
+//    void notifyDataSetChanged(List<Model> newItems) {
+//        if (newItems == null) {
+//            newItems = new ArrayList<>();
+//        }
+//
+//        for(int i = 0; i < mItems.size(); ++i)
+//        {
+//            if (mCallbacks != null) {
+//                mCallbacks.onCardRemoved(this, i);
+//            }
+//        }
+//
+//        for(int i =0; i < newItems.size(); ++i) {
+//            if (mCallbacks != null) {
+//                mCallbacks.onCardAdded(this, i);
+//            }
+//        }
+//    }
 
     public List<Model> getData() { return mItems;}
 
