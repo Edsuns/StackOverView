@@ -17,14 +17,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.s0n1.overview.misc.Utilities;
 import com.s0n1.overview.model.StackViewAdapter;
 import com.s0n1.overview.model.StackViewCardHolder;
 import com.s0n1.overview.views.OverView;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * The main Recents activity that is started from AlternateRecentsComponent.
@@ -84,9 +81,7 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
 
         models = new ArrayList<>();
         for(int i = 0; i < 10; ++i) {
-            Random random = new Random();
-            random.setSeed(i);
-            int color = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
+            int color = Color.argb(255, (int) (Math.random()*255),(int) (Math.random()*255),(int) (Math.random()*255));
             models.add(color);
         }
 
@@ -133,6 +128,19 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
             public boolean onMenuItemClick(MenuItem item) {
                 models.add(Color.argb(255,251,192,45));
                 mRecentsView.setTaskStack(stack);
+                return true;
+            }
+        });
+        menu.findItem(R.id.refresh_card).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int position = models.size()-2;
+                if (position<0) {
+                    position = 0;
+                }
+                models.remove(position);
+                models.add(position,Color.argb(255,(int) (Math.random()*255),(int) (Math.random()*255),(int) (Math.random()*255)));
+                mRecentsView.refresh(position);
                 return true;
             }
         });

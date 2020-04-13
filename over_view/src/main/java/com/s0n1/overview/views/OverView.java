@@ -107,6 +107,10 @@ public class OverView extends FrameLayout implements StackView.Callbacks {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
+    public void refresh(int position) {
+        mStackView.onCardChange(position);
+    }
+
     @Override
     public void onCardDismissed(int position) {
         if (mCallbacks != null) {

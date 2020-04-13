@@ -429,6 +429,15 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         return frame.contains((int)x, (int)y);
     }
 
+    public void onCardChange(int position) {
+        StackViewCard tv = getChildViewForIndex(position);
+        StackViewCardHolder holder = mViewHolderMap.get(tv);
+        if (holder != null) {
+            mStack.bindCardHolder(holder,position);
+            requestSynchronizeStackViewsWithModel();
+        }
+    }
+
     public void onCardAdded(StackViewAdapter stack, int position) {
         requestSynchronizeStackViewsWithModel();
     }
