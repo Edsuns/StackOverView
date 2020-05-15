@@ -24,17 +24,6 @@ public class StackViewCardTransform {
         // Do nothing
     }
 
-    public StackViewCardTransform(StackViewCardTransform o) {
-        startDelay = o.startDelay;
-        translationY = o.translationY;
-        translationZ = o.translationZ;
-        scale = o.scale;
-        alpha = o.alpha;
-        visible = o.visible;
-        rect.set(o.rect);
-        p = o.p;
-    }
-
     /** Resets the current transform */
     public void reset() {
         startDelay = 0;

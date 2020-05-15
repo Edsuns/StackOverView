@@ -8,7 +8,7 @@ import com.s0n1.overview.misc.Utilities;
 
 import java.util.HashMap;
 
-public class StackViewLayoutAlgorithm {
+class StackViewLayoutAlgorithm {
 
     //最小卡片的显示比率
     private static final float StackPeekMinScale = 0.8f; // The min scale of the last card in the peek area
@@ -16,16 +16,15 @@ public class StackViewLayoutAlgorithm {
     private OverViewConfiguration mConfig;
 
     // The various rects that define the stack view
-    Rect mViewRect = new Rect();
+    private Rect mViewRect = new Rect();
     Rect mStackVisibleRect = new Rect();
-    Rect mStackRect = new Rect();
+    private Rect mStackRect = new Rect();
     Rect mTaskRect = new Rect();
 
     // The min/max scroll progress
     float mMinScrollP;
     float mMaxScrollP;
     float mInitialScrollP;
-    private int mWithinAffiliationOffset;
     private int mBetweenAffiliationOffset;
 
     //存放个个cardview的比率
@@ -42,7 +41,7 @@ public class StackViewLayoutAlgorithm {
     //当前阶段总弧度，所占总体的百分比() （0->1）
     private static float[] px;
 
-    public StackViewLayoutAlgorithm(OverViewConfiguration config) {
+    StackViewLayoutAlgorithm(OverViewConfiguration config) {
         mConfig = config;
 
         // Precompute the path
@@ -50,7 +49,7 @@ public class StackViewLayoutAlgorithm {
     }
 
     /** Computes the stack and task rects */
-    public void computeRects(int windowWidth, int windowHeight, Rect taskStackBounds) {
+    void computeRects(int windowWidth, int windowHeight, Rect taskStackBounds) {
         // Compute the stack rects
         mViewRect.set(0, 0, windowWidth, windowHeight);
         mStackRect.set(taskStackBounds);
@@ -71,7 +70,6 @@ public class StackViewLayoutAlgorithm {
         // Update the affiliation offsets
         //这里设置cardview之间的各种参数
         float visibleTaskPct = 0.5f;
-        mWithinAffiliationOffset = 0;
         mBetweenAffiliationOffset = (int) (visibleTaskPct * mTaskRect.height());
     }
 
@@ -90,13 +88,6 @@ public class StackViewLayoutAlgorithm {
         // Note that we should account for the scale difference of the offsets at the screen bottom
         int taskHeight = mTaskRect.height();
         float pAtBottomOfStackRect = screenYToCurveProgress(mStackVisibleRect.bottom);
-        float pWithinAffiliateTop = screenYToCurveProgress(mStackVisibleRect.bottom -
-                mWithinAffiliationOffset);
-        float scale = curveProgressToScale(pWithinAffiliateTop);
-        int scaleYOffset = (int) (((1f - scale) * taskHeight) / 2);
-        pWithinAffiliateTop = screenYToCurveProgress(mStackVisibleRect.bottom -
-                mWithinAffiliationOffset + scaleYOffset);
-        float pWithinAffiliateOffset = pAtBottomOfStackRect - pWithinAffiliateTop;
         float pBetweenAffiliateOffset = pAtBottomOfStackRect -
                 screenYToCurveProgress(mStackVisibleRect.bottom - mBetweenAffiliationOffset);
         float pTaskHeightOffset = pAtBottomOfStackRect -
@@ -105,15 +96,13 @@ public class StackViewLayoutAlgorithm {
                 screenYToCurveProgress(mStackVisibleRect.bottom - (mStackVisibleRect.bottom - mStackRect.bottom));
 
         // Update the task offsets
-        float pAtBackMostCardTop = 0.5f;
-        float pAtFrontMostCardTop = pAtBackMostCardTop;
+        float pAtFrontMostCardTop = 0.5f;// also is pAtBackMostCardTop
         for (int i = 0; i < itemCount; i++) {
             mTaskProgressMap.put(i, pAtFrontMostCardTop);
 
             if (i < (itemCount - 1)) {
                 // Increment the peek height
-                float pPeek = pBetweenAffiliateOffset;
-                pAtFrontMostCardTop += pPeek;
+                pAtFrontMostCardTop += pBetweenAffiliateOffset;
             }
         }
 
@@ -122,17 +111,12 @@ public class StackViewLayoutAlgorithm {
         mInitialScrollP = Math.max(0, pAtFrontMostCardTop);
     }
 
-    /** Update/get the transform */
-    /**
+    /** Update/get the transform
      * 由初始化的mTaskProgressMap来构建 view各自OverviewCardTransform 的绘制
-     * @param position
-     * @param stackScroll
-     * @param transformOut
-     * @param prevTransform
-     * @return
+     *
      */
-    public StackViewCardTransform getStackTransform(int position, float stackScroll, StackViewCardTransform transformOut,
-                                                    StackViewCardTransform prevTransform) {
+    StackViewCardTransform getStackTransform(int position, float stackScroll, StackViewCardTransform transformOut,
+                                             StackViewCardTransform prevTransform) {
         // Return early if we have an invalid index
         if (!mTaskProgressMap.containsKey(position)) {
             transformOut.reset();
@@ -142,7 +126,7 @@ public class StackViewLayoutAlgorithm {
     }
 
     /** Update/get the transform */
-    public StackViewCardTransform getStackTransform(float taskProgress, float stackScroll, StackViewCardTransform transformOut, StackViewCardTransform prevTransform) {
+    StackViewCardTransform getStackTransform(float taskProgress, float stackScroll, StackViewCardTransform transformOut, StackViewCardTransform prevTransform) {
         float pTaskRelative = taskProgress - stackScroll;
         float pBounded = Math.max(0, Math.min(pTaskRelative, 1f));
         // 大于1就说明已经扩大到屏幕外了 If the task top is outside of the bounds below the screen, then immediately reset it
@@ -184,7 +168,7 @@ public class StackViewLayoutAlgorithm {
     }
 
     /** Initializes the curve. */
-    public static void initializeCurve() {
+    private static void initializeCurve() {
         if (xp != null && px != null) return;
         xp = new float[PrecisionSteps + 1];
         px = new float[PrecisionSteps + 1];
@@ -260,17 +244,17 @@ public class StackViewLayoutAlgorithm {
     }
 
     /** Reverses and scales out x. */
-    static float reverse(float x) {
+    private static float reverse(float x) {
         return (-x * XScale) + 1;
     }
 
     /** The log function describing the curve. */
-    static float logFunc(float x) {
+    private static float logFunc(float x) {
         return 1f - (float) (Math.pow(LogBase, reverse(x))) / (LogBase);
     }
 
     /** Converts from the progress along the curve to a screen coordinate. */
-    int curveProgressToScreenY(float p) {
+    private int curveProgressToScreenY(float p) {
         if (p < 0 || p > 1) return mStackVisibleRect.top + (int) (p * mStackVisibleRect.height());
         float pIndex = p * PrecisionSteps;
         int pFloorIndex = (int) Math.floor(pIndex);
@@ -284,18 +268,16 @@ public class StackViewLayoutAlgorithm {
         return mStackVisibleRect.top + (int) (x * mStackVisibleRect.height());
     }
 
-    /** Converts from the progress along the curve to a scale. */
-    /**
+    /** Converts from the progress along the curve to a scale.
      * 扩大的范围线性计算
      * @param p 当前比率
      * @return 经由缩小值计算后的比率
      */
-    float curveProgressToScale(float p) {
+    private float curveProgressToScale(float p) {
         if (p < 0) return StackPeekMinScale;
         if (p > 1) return 1f;
         float scaleRange = (1f - StackPeekMinScale);
-        float scale = StackPeekMinScale + (p * scaleRange);
-        return scale;
+        return StackPeekMinScale + (p * scaleRange);// scale
     }
 
 

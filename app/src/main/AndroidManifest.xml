@@ -28,6 +28,7 @@
 
         <!-- Alternate Recents -->
         <activity android:name="com.s0n1.OverView.OverViewActivity"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                   android:launchMode="singleInstance"
                   android:excludeFromRecents="true"
                   android:stateNotNeeded="true">

@@ -19,16 +19,16 @@ import android.widget.Toast;
 
 import com.s0n1.overview.model.StackViewAdapter;
 import com.s0n1.overview.model.StackViewCardHolder;
-import com.s0n1.overview.views.OverView;
+import com.s0n1.overview.views.StackView;
 
 import java.util.ArrayList;
 
 /**
  * The main Recents activity that is started from AlternateRecentsComponent.
  */
-public class OverViewActivity extends Activity implements OverView.RecentsViewCallbacks {
+public class OverViewActivity extends Activity implements StackView.OnDismissedListener {
     // Top level views
-    OverView mRecentsView;
+    StackView mRecentsView;
 
     ArrayList<Integer> models;
     StackViewAdapter stack;
@@ -53,15 +53,6 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(SearchManager.INTENT_GLOBAL_SEARCH_ACTIVITY_CHANGED);
-
-//        // Private API calls to make the shadows look better
-//        try {
-//            Utilities.setShadowProperty("ambientRatio", String.valueOf(1.5f));
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        } catch (InvocationTargetException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
@@ -115,8 +106,7 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
             }
         };
 
-        mRecentsView.setTaskStack(stack);
-
+        mRecentsView.setAdapter(stack);
     }
 
     @Override
@@ -127,7 +117,7 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 models.add(Color.argb(255,251,192,45));
-                mRecentsView.setTaskStack(stack);
+                mRecentsView.onCardAdded();
                 return true;
             }
         });
@@ -140,7 +130,7 @@ public class OverViewActivity extends Activity implements OverView.RecentsViewCa
                 }
                 models.remove(position);
                 models.add(position,Color.argb(255,(int) (Math.random()*255),(int) (Math.random()*255),(int) (Math.random()*255)));
-                mRecentsView.refresh(position);
+                mRecentsView.onCardChange(position);
                 return true;
             }
         });

@@ -29,8 +29,6 @@ class StackViewTouchHandler implements SwipeHelper.Callback {
     private int mMaximumVelocity;
     // The scroll touch slop is used to calculate when we start scrolling
     private int mScrollTouchSlop;
-    // The page touch slop is used to calculate when we start swiping
-    private float mPagingTouchSlop;
 
     private SwipeHelper mSwipeHelper;
     private boolean mInterceptedBySwipeHelper;
@@ -41,13 +39,14 @@ class StackViewTouchHandler implements SwipeHelper.Callback {
         mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
         mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
         mScrollTouchSlop = configuration.getScaledTouchSlop();
-        mPagingTouchSlop = configuration.getScaledPagingTouchSlop();
+        // The page touch slop is used to calculate when we start swiping
+        float mPagingTouchSlop = configuration.getScaledPagingTouchSlop();
         mSv = sv;
         mScroller = scroller;
         mConfig = config;
 
         float densityScale = context.getResources().getDisplayMetrics().density;
-        mSwipeHelper = new SwipeHelper(SwipeHelper.X, this, densityScale, mPagingTouchSlop, mConfig);
+        mSwipeHelper = new SwipeHelper(0, this, densityScale, mPagingTouchSlop, mConfig);
     }
 
     /** Velocity tracker helpers */

@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +26,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         ObjectPool.ObjectPoolConsumer<StackViewCardHolder, Integer> {
 
     /** The TaskView callbacks */
-    interface Callbacks {
+    public interface OnDismissedListener {
         void onCardDismissed(int position);
         void onAllCardsDismissed();
     }
@@ -36,7 +37,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
     StackViewLayoutAlgorithm mLayoutAlgorithm;
     StackViewScroller mStackScroller;
     StackViewTouchHandler mTouchHandler;
-    Callbacks mCb;
+    OnDismissedListener dismissedListener;
     ObjectPool<StackViewCardHolder, Integer> mViewPool;
     ArrayList<StackViewCardTransform> mCurrentCardTransforms = new ArrayList<>();
     HashMap<StackViewCard, StackViewCardHolder> mViewHolderMap = new HashMap<>();
@@ -48,9 +49,6 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
     boolean mStackViewsDirty = true;
     boolean mStackViewsClipDirty = true;
     boolean mAwaitingFirstLayout = true;
-    boolean mStartEnterAnimationRequestedAfterLayout;
-    boolean mStartEnterAnimationCompleted;
-    ViewAnimation.OverviewCardEnterContext mStartEnterAnimationContext;
     int[] mTmpVisibleRange = new int[2];
     Rect mTmpRect = new Rect();
     StackViewCardTransform mTmpTransform = new StackViewCardTransform();
@@ -64,11 +62,17 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         }
     };
 
-    public StackView(Context context, StackViewAdapter<StackViewCardHolder,Object> adapter, OverViewConfiguration config) {
-        super(context);
-        mConfig = config;
-        mStack = adapter;
-        mStack.setCallbacks(this);
+    public StackView(Context context) {
+        this(context, null);
+    }
+
+    public StackView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public StackView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        mConfig = new OverViewConfiguration(context);
         mViewPool = new ObjectPool<>(context, this);
         mInflater = LayoutInflater.from(context);
         mLayoutAlgorithm = new StackViewLayoutAlgorithm(mConfig);
@@ -77,9 +81,14 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         mTouchHandler = new StackViewTouchHandler(context, this, mConfig, mStackScroller);
     }
 
+    public void setAdapter(StackViewAdapter<StackViewCardHolder, Object> adapter) {
+        mStack = adapter;
+        mStack.setCallbacks(this);
+    }
+
     /** Sets the callbacks */
-    void setCallbacks(Callbacks cb) {
-        mCb = cb;
+    public void setCallbacks(OnDismissedListener cb) {
+        dismissedListener = cb;
     }
 
     /** Requests that the views be synchronized with the model */
@@ -97,6 +106,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         } else {
             mStackViewsAnimationDuration = Math.max(mStackViewsAnimationDuration, duration);
         }
+        requestLayout();
     }
 
     /** Requests that the views clipping be updated. */
@@ -120,10 +130,9 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
     }
 
     private boolean updateStackTransforms(ArrayList<StackViewCardTransform> cardTransforms,
-                                       int itemCount,
-                                       float stackScroll,
-                                       int[] visibleRangeOut,
-                                       boolean boundTranslationsToRect) {
+                                          int itemCount,
+                                          float stackScroll,
+                                          int[] visibleRangeOut) {
         // XXX: We should be intelligent about where to look for the visible stack range using the
         //      current stack scroll.
         // XXX: We should log extra cases like the ones below where we don't expect to hit very often
@@ -168,27 +177,23 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
                 }
             }
 
-            if (boundTranslationsToRect) {
-                transform.translationY = Math.min(transform.translationY,
-                        mLayoutAlgorithm.mViewRect.bottom);
-            }
             prevTransform = transform;
         }
         if (visibleRangeOut != null) {
             visibleRangeOut[0] = frontMostVisibleIndex;
             visibleRangeOut[1] = backMostVisibleIndex;
         }
-        return frontMostVisibleIndex != -1 && backMostVisibleIndex != -1;
+        return frontMostVisibleIndex != -1;
     }
 
     /** Synchronizes the views with the model */
-    boolean synchronizeStackViewsWithModel() {
+    void synchronizeStackViewsWithModel() {
         if (mStackViewsDirty) {
 
             float stackScroll = mStackScroller.getStackScroll();
             int[] visibleRange = mTmpVisibleRange;
             boolean isValidVisibleRange = updateStackTransforms(mCurrentCardTransforms, mStack.getNumberOfItems(),
-                    stackScroll, visibleRange, false);
+                    stackScroll, visibleRange);
 
             ArrayList<Map.Entry<StackViewCard, StackViewCardHolder>> entrySet = new ArrayList<>(mViewHolderMap.entrySet());
 
@@ -222,7 +227,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
                         } else {
                             mLayoutAlgorithm.getStackTransform(1f, 0f, mTmpTransform, null);
                         }
-                        vh.getContainer().updateViewPropertiesToCardTransform(mTmpTransform, 0);
+                        vh.getContainer().updateViewPropertiesToCardTransform(mTmpTransform);
                     }
                 }
 
@@ -235,9 +240,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
             mStackViewsAnimationDuration = 0;
             mStackViewsDirty = false;
             mStackViewsClipDirty = true;
-            return true;
         }
-        return false;
     }
 
     /** Updates the clip for each of the task views. */
@@ -303,10 +306,15 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
+        @SuppressLint("DrawAllocation")
+        Rect stackBounds = new Rect();
+        mConfig.getOverviewStackBounds(width, height, stackBounds);
+        setStackInsetRect(stackBounds);
 
         //空间大部分的初始化都在这里
 
         // Compute our stack/task rects
+        @SuppressLint("DrawAllocation")
         Rect taskStackBounds = new Rect(mOverviewStackBounds);
         computeRects(width, height, taskStackBounds);
 
@@ -373,54 +381,6 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         {
             entry.getKey().prepareEnterRecentsAnimation();
         }
-
-        // If the enter animation started already and we haven't completed a layout yet, do the
-        // enter animation now
-        if (mStartEnterAnimationRequestedAfterLayout) {
-            startEnterRecentsAnimation(mStartEnterAnimationContext);
-            mStartEnterAnimationRequestedAfterLayout = false;
-            mStartEnterAnimationContext = null;
-        }
-    }
-
-    /** Requests this task stacks to start it's enter-recents animation */
-    public void startEnterRecentsAnimation(ViewAnimation.OverviewCardEnterContext ctx) {
-        // If we are still waiting to layout, then just defer until then
-        if (mAwaitingFirstLayout) {
-            mStartEnterAnimationRequestedAfterLayout = true;
-            mStartEnterAnimationContext = ctx;
-            return;
-        }
-
-        int childCount = getChildCount();
-
-        if (mStack.getNumberOfItems() > 0) {
-            // Find the launch target task
-
-            int launchTargetIndex = childCount == 0 ? -1 : 0;
-
-            for(int i = 0; i < childCount; ++i)
-            {
-                StackViewCard card = (StackViewCard)getChildAt(i);
-
-                ctx.currentTaskTransform = new StackViewCardTransform();
-                ctx.currentStackViewIndex = i;
-                ctx.currentStackViewCount = childCount;
-                ctx.currentTaskRect = mLayoutAlgorithm.mTaskRect;
-                ctx.currentTaskOccludesLaunchTarget = (launchTargetIndex != -1);
-                ctx.updateListener = mRequestUpdateClippingListener;
-                mLayoutAlgorithm.getStackTransform(i, mStackScroller.getStackScroll(), ctx.currentTaskTransform, null);
-                card.startEnterRecentsAnimation(ctx);
-            }
-
-            // Add a runnable to the post animation ref counter to clear all the views
-            ctx.postAnimationTrigger.addLastDecrementRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    mStartEnterAnimationCompleted = true;
-                }
-            });
-        }
     }
 
     public boolean isTransformedTouchPointInView(float x, float y, View child) {
@@ -433,13 +393,14 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         StackViewCard tv = getChildViewForIndex(position);
         StackViewCardHolder holder = mViewHolderMap.get(tv);
         if (holder != null) {
-            mStack.bindCardHolder(holder,position);
+            mStack.bindCardHolder(holder, position);
             requestSynchronizeStackViewsWithModel();
         }
     }
 
-    public void onCardAdded(StackViewAdapter stack, int position) {
+    public void onCardAdded() {
         requestSynchronizeStackViewsWithModel();
+        mStackScroller.setStackScrollToInitialState();
     }
 
     public void onCardRemoved(StackViewAdapter stack, int removedTask) {
@@ -449,7 +410,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         StackViewCardHolder holder = mViewHolderMap.get(tv);
 
         // Notify the callback that we've removed the task and it can clean up after it
-        mCb.onCardDismissed(removedTask);
+        dismissedListener.onCardDismissed(removedTask);
 
         if (tv != null && holder!=null) {
             holder.setPosition(-1);
@@ -491,7 +452,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         // If there are no remaining tasks, then either unfilter the current stack, or just close
         // the activity if there are no filtered stacks
         if (mStack.getNumberOfItems() == 0) {
-            mCb.onAllCardsDismissed();
+            dismissedListener.onAllCardsDismissed();
         }
     }
 

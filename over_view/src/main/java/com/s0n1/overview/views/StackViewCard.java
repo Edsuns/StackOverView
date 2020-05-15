@@ -1,9 +1,7 @@
 package com.s0n1.overview.views;
 
-import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
@@ -50,14 +48,7 @@ public class StackViewCard extends FrameLayout {
         init(context);
     }
 
-    @TargetApi(21)
-    public StackViewCard(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
-    }
-
-    private void init(Context context)
-    {
+    private void init(Context context) {
         setBackgroundColor(Color.TRANSPARENT);
 
         mContentContainer = new LinearLayout(context);
@@ -113,8 +104,8 @@ public class StackViewCard extends FrameLayout {
     }
 
     /** Synchronizes this view's properties with the task's transform */
-    void updateViewPropertiesToCardTransform(StackViewCardTransform toTransform, int duration) {
-        updateViewPropertiesToCardTransform(toTransform, duration, null);
+    void updateViewPropertiesToCardTransform(StackViewCardTransform toTransform) {
+        updateViewPropertiesToCardTransform(toTransform, 0, null);
     }
 
     void updateViewPropertiesToCardTransform(StackViewCardTransform toTransform, int duration,
@@ -146,50 +137,6 @@ public class StackViewCard extends FrameLayout {
     /** Prepares this task view for the enter-recents animations.  This is called earlier in the
      * first layout because the actual animation into recents may take a long time. */
     void prepareEnterRecentsAnimation() {
-    }
-
-    /** Animates this task view as it enters recents */
-    void startEnterRecentsAnimation(final ViewAnimation.OverviewCardEnterContext ctx) {
-        final StackViewCardTransform transform = ctx.currentTaskTransform;
-
-        // Animate the tasks up
-        int frontIndex = (ctx.currentStackViewCount - ctx.currentStackViewIndex - 1);
-        int duration = Math.max(0, mConfig.taskViewEnterFromHomeDuration +
-                frontIndex * mConfig.taskViewEnterFromHomeStaggerDelay);
-
-        int delay =  Math.max(0, mConfig.taskViewEnterFromHomeDelay -
-                frontIndex * mConfig.taskViewEnterFromHomeStaggerDelay);
-
-        setScaleX(transform.scale);
-        setScaleY(transform.scale);
-        animate()
-                .translationY(transform.translationY)
-                .setStartDelay(delay)
-                .setInterpolator(mConfig.quintOutInterpolator)
-                .setDuration(duration)
-                .setListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        ctx.postAnimationTrigger.decrement();
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
-                })
-                .start();
-        ctx.postAnimationTrigger.increment();
     }
 
     /** Sets the current task progress. */

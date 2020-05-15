@@ -14,7 +14,7 @@ public abstract class StackViewAdapter<VH extends StackViewCardHolder, Model> {
 
     /** Task stack callbacks */
     public interface Callbacks {
-        void onCardAdded(StackViewAdapter adapter, int position);
+        void onCardAdded();
         void onCardRemoved(StackViewAdapter adapter, int position);
     }
 
@@ -36,21 +36,8 @@ public abstract class StackViewAdapter<VH extends StackViewCardHolder, Model> {
         mCallbacks = cb;
     }
 
-    /**
-     * 插入元素
-     * @param model 元素
-     * @param position 位置
-     */
-    public void notifyDataSetInserted(Model model, int position) {
-        if (position < 0 || position > mItems.size()) {
-            throw new IllegalArgumentException("Position is out of bounds.");
-        }
-
-        mItems.add(position, model);
-
-        if (mCallbacks != null) {
-            mCallbacks.onCardAdded(this, position);
-        }
+    public void notifyDataAdded(Model model) {
+        mItems.add(model);
     }
 
     /** Removes a task */
@@ -66,29 +53,6 @@ public abstract class StackViewAdapter<VH extends StackViewCardHolder, Model> {
             mCallbacks.onCardRemoved(this, position);
         }
     }
-
-//    /**
-//     * 只不过是删除然后再重新添加罢了，来实现改变某项内容
-//     * @param newItems
-//     */
-//    void notifyDataSetChanged(List<Model> newItems) {
-//        if (newItems == null) {
-//            newItems = new ArrayList<>();
-//        }
-//
-//        for(int i = 0; i < mItems.size(); ++i)
-//        {
-//            if (mCallbacks != null) {
-//                mCallbacks.onCardRemoved(this, i);
-//            }
-//        }
-//
-//        for(int i =0; i < newItems.size(); ++i) {
-//            if (mCallbacks != null) {
-//                mCallbacks.onCardAdded(this, i);
-//            }
-//        }
-//    }
 
     public List<Model> getData() { return mItems;}
 

@@ -14,26 +14,17 @@ public class OverViewConfiguration {
 
     /** Interpolators */
     public Interpolator fastOutSlowInInterpolator;
-    public Interpolator fastOutLinearInInterpolator;
     public Interpolator linearOutSlowInInterpolator;
-    public Interpolator quintOutInterpolator;
 
     /** Insets */
-    public Rect displayRect = new Rect();
+    private Rect displayRect = new Rect();
 
     /** Task stack */
     public int taskStackScrollDuration;
-    public int taskStackMaxDim;
     public int taskStackTopPaddingPx;
     public float taskStackWidthPaddingPct;
     public float taskStackOverscrollPct;
 
-    /** Task view animation and styles */
-    public int taskViewEnterFromHomeDelay;
-    public int taskViewEnterFromHomeDuration;
-    public int taskViewEnterFromHomeStaggerDelay;
-    public int taskViewRemoveAnimDuration;
-    public int taskViewRemoveAnimTranslationXPx;
     public int taskViewTranslationZMinPx;
     public int taskViewTranslationZMaxPx;
 
@@ -41,17 +32,13 @@ public class OverViewConfiguration {
     public OverViewConfiguration(Context context) {
         fastOutSlowInInterpolator = AnimationUtils.loadInterpolator(context,
                 android.R.interpolator.accelerate_decelerate);
-        fastOutLinearInInterpolator = AnimationUtils.loadInterpolator(context,
-                android.R.interpolator.accelerate_decelerate);
         linearOutSlowInInterpolator = AnimationUtils.loadInterpolator(context,
                 android.R.interpolator.accelerate_decelerate);
-        quintOutInterpolator = AnimationUtils.loadInterpolator(context,
-                android.R.interpolator.decelerate_quint);
         update(context);
     }
 
     /** Updates the state, given the specified context */
-    void update(Context context) {
+    private void update(Context context) {
         Resources res = context.getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
 
@@ -72,20 +59,9 @@ public class OverViewConfiguration {
         res.getValue(R.dimen.recents_stack_overscroll_percentage, stackOverscrollPctValue, true);
         taskStackOverscrollPct = stackOverscrollPctValue.getFloat();
 
-        taskStackMaxDim = res.getInteger(R.integer.recents_max_task_stack_view_dim);
         taskStackTopPaddingPx = res.getDimensionPixelSize(R.dimen.recents_stack_top_padding);
 
         // Task view animation and styles
-        taskViewEnterFromHomeDelay =
-                res.getInteger(R.integer.recents_animate_task_enter_from_home_delay);
-        taskViewEnterFromHomeDuration =
-                res.getInteger(R.integer.recents_animate_task_enter_from_home_duration);
-        taskViewEnterFromHomeStaggerDelay =
-                res.getInteger(R.integer.recents_animate_task_enter_from_home_stagger_delay);
-        taskViewRemoveAnimDuration =
-                res.getInteger(R.integer.recents_animate_task_view_remove_duration);
-        taskViewRemoveAnimTranslationXPx =
-                res.getDimensionPixelSize(R.dimen.recents_task_view_remove_anim_translation_x);
         taskViewTranslationZMinPx = res.getDimensionPixelSize(R.dimen.recents_task_view_z_min);
         taskViewTranslationZMaxPx = res.getDimensionPixelSize(R.dimen.recents_task_view_z_max);
     }

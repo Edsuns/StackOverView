@@ -10,21 +10,21 @@ import android.widget.OverScroller;
 import com.s0n1.overview.misc.OverViewConfiguration;
 
 /* The scrolling logic for a TaskStackView */
-public class StackViewScroller {
+class StackViewScroller {
     public interface Callbacks {
         void onScrollChanged(float p);
     }
 
-    OverViewConfiguration mConfig;
-    StackViewLayoutAlgorithm mLayoutAlgorithm;
-    Callbacks mCb;
+    private OverViewConfiguration mConfig;
+    private StackViewLayoutAlgorithm mLayoutAlgorithm;
+    private Callbacks mCb;
 
-    float mStackScrollP;
+    private float mStackScrollP;
 
     OverScroller mScroller;
     ObjectAnimator mScrollAnimator;
 
-    public StackViewScroller(Context context, OverViewConfiguration config, StackViewLayoutAlgorithm layoutAlgorithm) {
+    StackViewScroller(Context context, OverViewConfiguration config, StackViewLayoutAlgorithm layoutAlgorithm) {
         mConfig = config;
         mScroller = new OverScroller(context);
         mLayoutAlgorithm = layoutAlgorithm;
@@ -37,12 +37,12 @@ public class StackViewScroller {
     }
 
     /** Gets the current stack scroll */
-    public float getStackScroll() {
+    float getStackScroll() {
         return mStackScrollP;
     }
 
     /** Sets the current stack scroll */
-    public void setStackScroll(float s) {
+    void setStackScroll(float s) {
         mStackScrollP = s;
         if (mCb != null) {
             mCb.onScrollChanged(mStackScrollP);
@@ -50,38 +50,26 @@ public class StackViewScroller {
     }
 
     /** Sets the current stack scroll without calling the callback. */
-    void setStackScrollRaw(float s) {
+    private void setStackScrollRaw(float s) {
         mStackScrollP = s;
     }
 
     /** Sets the current stack scroll to the initial state when you first enter recents */
-    public void setStackScrollToInitialState() {
+    void setStackScrollToInitialState() {
         setStackScroll(getBoundedStackScroll(mLayoutAlgorithm.mInitialScrollP));
     }
 
     /** Bounds the current scroll if necessary */
-    public boolean boundScroll() {
+    void boundScroll() {
         float curScroll = getStackScroll();
         float newScroll = getBoundedStackScroll(curScroll);
         if (Float.compare(newScroll, curScroll) != 0) {
             setStackScroll(newScroll);
-            return true;
         }
-        return false;
-    }
-    /** Bounds the current scroll if necessary, but does not synchronize the stack view with the model. */
-    public boolean boundScrollRaw() {
-        float curScroll = getStackScroll();
-        float newScroll = getBoundedStackScroll(curScroll);
-        if (Float.compare(newScroll, curScroll) != 0) {
-            setStackScrollRaw(newScroll);
-            return true;
-        }
-        return false;
     }
 
     /** Returns the bounded stack scroll */
-    float getBoundedStackScroll(float scroll) {
+    private float getBoundedStackScroll(float scroll) {
         return Math.max(mLayoutAlgorithm.mMinScrollP, Math.min(mLayoutAlgorithm.mMaxScrollP, scroll));
     }
 
@@ -101,18 +89,17 @@ public class StackViewScroller {
     }
 
     /** Animates the stack scroll into bounds */
-    ObjectAnimator animateBoundScroll() {
+    void animateBoundScroll() {
         float curScroll = getStackScroll();
         float newScroll = getBoundedStackScroll(curScroll);
         if (Float.compare(newScroll, curScroll) != 0) {
             // Start a new scroll animation
-            animateScroll(curScroll, newScroll, null);
+            animateScroll(curScroll, newScroll);
         }
-        return mScrollAnimator;
     }
 
     /** Animates the stack scroll */
-    void animateScroll(float curScroll, float newScroll, final Runnable postRunnable) {
+    private void animateScroll(float curScroll, float newScroll) {
         // Abort any current animations
         stopScroller();
         stopBoundScrollAnimation();
@@ -129,9 +116,6 @@ public class StackViewScroller {
         mScrollAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (postRunnable != null) {
-                    postRunnable.run();
-                }
                 mScrollAnimator.removeAllListeners();
             }
         });
@@ -152,21 +136,19 @@ public class StackViewScroller {
         return (int) (p * mLayoutAlgorithm.mStackVisibleRect.height());
     }
 
-    float scrollRangeToProgress(int s) {
+    private float scrollRangeToProgress(int s) {
         return (float) s / mLayoutAlgorithm.mStackVisibleRect.height();
     }
 
     /** Called from the view draw, computes the next scroll. */
-    boolean computeScroll() {
+    void computeScroll() {
         if (mScroller.computeScrollOffset()) {
             float scroll = scrollRangeToProgress(mScroller.getCurrY());
             setStackScrollRaw(scroll);
             if (mCb != null) {
                 mCb.onScrollChanged(scroll);
             }
-            return true;
         }
-        return false;
     }
 
     /** Returns whether the overscroller is scrolling. */
