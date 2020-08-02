@@ -1,12 +1,8 @@
 
 package com.s0n1.OverView;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.s0n1.overview.model.StackViewAdapter;
 import com.s0n1.overview.model.StackViewCardHolder;
@@ -28,136 +23,120 @@ import java.util.ArrayList;
  */
 public class OverViewActivity extends Activity implements StackView.OnDismissedListener {
     // Top level views
-    StackView mRecentsView;
+    private StackView<Integer> stackView;
 
-    ArrayList<Integer> models;
-    StackViewAdapter stack;
+    private ArrayList<Integer> models;
+    private StackViewAdapter<Integer> stack;
 
-    /** Called with the activity is first created. */
+    private MenuItem changeMenuItem;
+
+    /**
+     * Called with the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // For the non-primary user, ensure that the SystemSericesProxy is initialized
-
-        // Initialize the widget host (the host id is static and does not change)
-
-        // Set the Recents layout
         setContentView(R.layout.recents);
-        mRecentsView = findViewById(R.id.recents_view);
-        mRecentsView.setCallbacks(this);
-        mRecentsView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+
+        configureStackView();
+    }
+
+    private void configureStackView() {
+        stackView = findViewById(R.id.recents_view);
+        stackView.setCallbacks(this);
+
+        stackView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 
-        // Register the broadcast receiver to handle messages when the screen is turned off
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_SCREEN_OFF);
-        filter.addAction(SearchManager.INTENT_GLOBAL_SEARCH_ACTIVITY_CHANGED);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
         models = new ArrayList<>();
-        for(int i = 0; i < 10; ++i) {
-            int color = Color.argb(255, (int) (Math.random()*255),(int) (Math.random()*255),(int) (Math.random()*255));
-            models.add(color);
+        for (int i = 0; i < 10; ++i) {
+            models.add(randomColor());
         }
 
-        stack = new StackViewAdapter<StackViewCardHolder<View, Integer>, Integer>(models) {
+        stack = new StackViewAdapter<Integer>(models) {
             @Override
-            public StackViewCardHolder<View, Integer> onCreateCardHolder(Context context, ViewGroup parent) {
+            public StackViewCardHolder<Integer> onCreateCardHolder(Context context, ViewGroup parent) {
                 View v = View.inflate(context, R.layout.recents_dummy, null);
                 return new StackViewCardHolder<>(v);
             }
 
             @Override
-            public void onBindCardHolder(StackViewCardHolder<View, Integer> cardHolder) {
+            public void onBindCardHolder(StackViewCardHolder<Integer> cardHolder) {
                 final int position = cardHolder.getPosition();
-                View view = cardHolder.itemView;
-                ((View)view.getParent()).setBackgroundColor(cardHolder.model);
-                view.setOnClickListener(new View.OnClickListener() {
-                    @SuppressLint("ShowToast")
+                View card = cardHolder.itemView;
+                ((View) card.getParent()).setBackgroundColor(cardHolder.model);
+                card.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getApplicationContext(),"Clicked: "+position,
-                                Toast.LENGTH_SHORT).show();
+                        MutableToast.show(getApplicationContext(), "Clicked: " + position);
                     }
                 });
-                ((TextView)view.findViewById(R.id.text_num)).setText(String.valueOf(position));
-                view.findViewById(R.id.close_card).setOnClickListener(new View.OnClickListener() {
+                ((TextView) card.findViewById(R.id.text_num)).setText(String.valueOf(position));
+                card.findViewById(R.id.close_card).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        notifyDataSetRemoved(position);
+                        notifyDataRemoved(position);
                     }
                 });
             }
         };
 
-        mRecentsView.setAdapter(stack);
+        stackView.setAdapter(stack);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
-        menu.findItem(R.id.add_card).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        menu.findItem(R.id.scroll_card)
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                models.add(Color.argb(255,251,192,45));
-                mRecentsView.onCardAdded();
+                int position = (int) (Math.random() * models.size());
+                stackView.animateScrollTo(position);
+                MutableToast.show(OverViewActivity.this, "Scroll To: " + position);
                 return true;
             }
         });
-        menu.findItem(R.id.refresh_card).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        changeMenuItem = menu.findItem(R.id.change_card)
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        int position = models.size() - 2;
+                        if (position < 0) {
+                            position = 0;
+                        }
+                        stack.notifyDataChange(randomColor(), position);
+                        MutableToast.show(OverViewActivity.this, "Change: " + position);
+                        return true;
+                    }
+                });
+        menu.findItem(R.id.add_card)
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                int position = models.size()-2;
-                if (position<0) {
-                    position = 0;
-                }
-                models.remove(position);
-                models.add(position,Color.argb(255,(int) (Math.random()*255),(int) (Math.random()*255),(int) (Math.random()*255)));
-                mRecentsView.onCardChange(position);
+                stack.notifyDataAdded(randomColor());
+                changeMenuItem.setEnabled(true);
                 return true;
             }
         });
         return true;
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onTrimMemory(int level) {
+    private int randomColor() {
+        return Color.argb(255, (int) (Math.random() * 255),
+                (int) (Math.random() * 255), (int) (Math.random() * 255));
     }
 
     @Override
     public void onAllCardsDismissed() {
-        Toast.makeText(this,"All Cards Dismissed",Toast.LENGTH_SHORT).show();
+        MutableToast.show(this, "All Cards Dismissed");
+        changeMenuItem.setEnabled(false);
     }
 
     @Override
     public void onCardDismissed(int position) {
-        Toast.makeText(this,"Dismissed: "+position,Toast.LENGTH_SHORT).show();
+        MutableToast.show(this, "Dismissed: " + position);
     }
 }

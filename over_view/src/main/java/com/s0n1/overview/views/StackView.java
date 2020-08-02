@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+
 import com.s0n1.overview.misc.OverViewConfiguration;
 import com.s0n1.overview.model.StackViewAdapter;
 import com.s0n1.overview.model.StackViewCardHolder;
@@ -22,25 +23,28 @@ import java.util.Map;
 
 /* The visual representation of a task stack view */
 @SuppressLint("ViewConstructor")
-public class StackView extends FrameLayout implements StackViewAdapter.Callbacks, StackViewScroller.Callbacks,
-        ObjectPool.ObjectPoolConsumer<StackViewCardHolder, Integer> {
+public class StackView<Model> extends FrameLayout implements StackViewAdapter.Callback, StackViewScroller.Callbacks,
+        ObjectPool.ObjectPoolConsumer<StackViewCardHolder<Model>, Integer> {
 
-    /** The TaskView callbacks */
+    /**
+     * The TaskView callbacks
+     */
     public interface OnDismissedListener {
         void onCardDismissed(int position);
+
         void onAllCardsDismissed();
     }
 
     OverViewConfiguration mConfig;
 
-    StackViewAdapter<StackViewCardHolder,Object> mStack;
+    StackViewAdapter<Model> mStack;
     StackViewLayoutAlgorithm mLayoutAlgorithm;
     StackViewScroller mStackScroller;
     StackViewTouchHandler mTouchHandler;
     OnDismissedListener dismissedListener;
-    ObjectPool<StackViewCardHolder, Integer> mViewPool;
+    ObjectPool<StackViewCardHolder<Model>, Integer> mViewPool;
     ArrayList<StackViewCardTransform> mCurrentCardTransforms = new ArrayList<>();
-    HashMap<StackViewCard, StackViewCardHolder> mViewHolderMap = new HashMap<>();
+    HashMap<StackViewCard, StackViewCardHolder<Model>> mViewHolderMap = new HashMap<>();
 
     Rect mOverviewStackBounds = new Rect();
 
@@ -56,11 +60,11 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
 
     ValueAnimator.AnimatorUpdateListener mRequestUpdateClippingListener =
             new ValueAnimator.AnimatorUpdateListener() {
-        @Override
-        public void onAnimationUpdate(ValueAnimator animation) {
-            requestUpdateStackViewsClip();
-        }
-    };
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    requestUpdateStackViewsClip();
+                }
+            };
 
     public StackView(Context context) {
         this(context, null);
@@ -81,20 +85,25 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         mTouchHandler = new StackViewTouchHandler(context, this, mConfig, mStackScroller);
     }
 
-    public void setAdapter(StackViewAdapter<StackViewCardHolder, Object> adapter) {
+    public void setAdapter(StackViewAdapter<Model> adapter) {
         mStack = adapter;
         mStack.setCallbacks(this);
     }
 
-    /** Sets the callbacks */
+    /**
+     * Sets the callbacks
+     */
     public void setCallbacks(OnDismissedListener cb) {
         dismissedListener = cb;
     }
 
-    /** Requests that the views be synchronized with the model */
+    /**
+     * Requests that the views be synchronized with the model
+     */
     void requestSynchronizeStackViewsWithModel() {
         requestSynchronizeStackViewsWithModel(0);
     }
+
     void requestSynchronizeStackViewsWithModel(int duration) {
         if (!mStackViewsDirty) {
             invalidate();
@@ -109,7 +118,9 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         requestLayout();
     }
 
-    /** Requests that the views clipping be updated. */
+    /**
+     * Requests that the views clipping be updated.
+     */
     void requestUpdateStackViewsClip() {
         if (!mStackViewsClipDirty) {
             invalidate();
@@ -121,7 +132,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             StackViewCard tv = (StackViewCard) getChildAt(i);
-            StackViewCardHolder holder = mViewHolderMap.get(tv);
+            StackViewCardHolder<Model> holder = mViewHolderMap.get(tv);
             if (holder != null && holder.getPosition() == index) {
                 return tv;
             }
@@ -186,7 +197,9 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         return frontMostVisibleIndex != -1;
     }
 
-    /** Synchronizes the views with the model */
+    /**
+     * Synchronizes the views with the model
+     */
     void synchronizeStackViewsWithModel() {
         if (mStackViewsDirty) {
 
@@ -195,16 +208,14 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
             boolean isValidVisibleRange = updateStackTransforms(mCurrentCardTransforms, mStack.getNumberOfItems(),
                     stackScroll, visibleRange);
 
-            ArrayList<Map.Entry<StackViewCard, StackViewCardHolder>> entrySet = new ArrayList<>(mViewHolderMap.entrySet());
+            ArrayList<Map.Entry<StackViewCard, StackViewCardHolder<Model>>> entrySet = new ArrayList<>(mViewHolderMap.entrySet());
 
-            Map<Integer, StackViewCardHolder> reusedMap = new HashMap<>();
+            Map<Integer, StackViewCardHolder<Model>> reusedMap = new HashMap<>();
 
-            for(Map.Entry<StackViewCard, StackViewCardHolder> entry : entrySet)
-            {
+            for (Map.Entry<StackViewCard, StackViewCardHolder<Model>> entry : entrySet) {
                 int position = entry.getValue().getPosition();
-                if (visibleRange[1] <= position && position <= visibleRange[0])
-                {
-                    StackViewCardHolder vh = entry.getValue();
+                if (visibleRange[1] <= position && position <= visibleRange[0]) {
+                    StackViewCardHolder<Model> vh = entry.getValue();
                     reusedMap.put(position, vh);
                 } else {
                     mViewPool.returnObjectToPool(entry.getValue());
@@ -215,7 +226,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
             for (int i = visibleRange[0]; isValidVisibleRange && i >= visibleRange[1]; i--) {
                 StackViewCardTransform transform = mCurrentCardTransforms.get(i);
 
-                StackViewCardHolder vh = reusedMap.get(i);
+                StackViewCardHolder<Model> vh = reusedMap.get(i);
                 if (vh == null) {
                     vh = mViewPool.pickUpObjectFromPool(i, i);
 
@@ -243,12 +254,36 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         }
     }
 
-    /** Updates the clip for each of the task views. */
+    public void animateScrollTo(int position) {
+        int maxPosition = mStack.getNumberOfItems() - 1;
+        if (maxPosition < 0) return;
+        if (position < 0) {
+            position = 0;
+        }
+        if (position > maxPosition) {
+            position = maxPosition;
+        }
+
+        float targetScroll;
+        if (position == maxPosition) {
+            targetScroll = mLayoutAlgorithm.mMaxScrollP;
+        } else {
+            targetScroll = mLayoutAlgorithm.getStackScrollForTask(position) - 0.5f;
+        }
+
+        mStackScroller.animateScroll(mStackScroller.getStackScroll(), targetScroll);
+    }
+
+    /**
+     * Updates the clip for each of the task views.
+     */
     void clipTaskViews() {
         mStackViewsClipDirty = false;
     }
 
-    /** The stack insets to apply to the stack contents */
+    /**
+     * The stack insets to apply to the stack contents
+     */
     public void setStackInsetRect(Rect r) {
         mOverviewStackBounds.set(r);
     }
@@ -259,7 +294,9 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         super.setOnTouchListener(l);
     }
 
-    /** Updates the min and max virtual scroll bounds */
+    /**
+     * Updates the min and max virtual scroll bounds
+     */
     void updateMinMaxScroll(boolean boundScrollToNewMinMax) {
         // Compute the min and max scroll values
         mLayoutAlgorithm.computeMinMaxScroll(mStack.getNumberOfItems());
@@ -289,7 +326,9 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         clipTaskViews();
     }
 
-    /** Computes the stack and task rects */
+    /**
+     * Computes the stack and task rects
+     */
     public void computeRects(int windowWidth, int windowHeight, Rect taskStackBounds) {
         // Compute the rects in the stack algorithm
         mLayoutAlgorithm.computeRects(windowWidth, windowHeight, taskStackBounds);
@@ -336,11 +375,11 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
                 mTmpRect.setEmpty();
             }
             tv.measure(
-                MeasureSpec.makeMeasureSpec(
-                        mLayoutAlgorithm.mTaskRect.width() + mTmpRect.left + mTmpRect.right,
-                        MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(
-                        mLayoutAlgorithm.mTaskRect.height() + mTmpRect.top + mTmpRect.bottom, MeasureSpec.EXACTLY));
+                    MeasureSpec.makeMeasureSpec(
+                            mLayoutAlgorithm.mTaskRect.width() + mTmpRect.left + mTmpRect.right,
+                            MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(
+                            mLayoutAlgorithm.mTaskRect.height() + mTmpRect.top + mTmpRect.bottom, MeasureSpec.EXACTLY));
         }
 
         setMeasuredDimension(width, height);
@@ -353,7 +392,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
      */
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-       // Layout each of the children
+        // Layout each of the children
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             StackViewCard tv = (StackViewCard) getChildAt(i);
@@ -374,11 +413,12 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         }
     }
 
-    /** Handler for the first layout. */
+    /**
+     * Handler for the first layout.
+     */
     void onFirstLayout() {
 
-        for (Map.Entry<StackViewCard, StackViewCardHolder> entry : mViewHolderMap.entrySet())
-        {
+        for (Map.Entry<StackViewCard, StackViewCardHolder<Model>> entry : mViewHolderMap.entrySet()) {
             entry.getKey().prepareEnterRecentsAnimation();
         }
     }
@@ -386,12 +426,13 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
     public boolean isTransformedTouchPointInView(float x, float y, View child) {
         final Rect frame = new Rect();
         child.getHitRect(frame);
-        return frame.contains((int)x, (int)y);
+        return frame.contains((int) x, (int) y);
     }
 
+    @Override
     public void onCardChange(int position) {
         StackViewCard tv = getChildViewForIndex(position);
-        StackViewCardHolder holder = mViewHolderMap.get(tv);
+        StackViewCardHolder<Model> holder = mViewHolderMap.get(tv);
         if (holder != null) {
             mStack.bindCardHolder(holder, position);
             requestSynchronizeStackViewsWithModel();
@@ -399,29 +440,33 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
     }
 
     public void onCardAdded() {
+        // Update the min/max scroll
+        updateMinMaxScroll(false);
+
         requestSynchronizeStackViewsWithModel();
-        mStackScroller.setStackScrollToInitialState();
+        animateScrollTo(mStack.getNumberOfItems() - 1);
     }
 
-    public void onCardRemoved(StackViewAdapter stack, int removedTask) {
+    public void onCardRemoved(int removedTask) {
+        final StackViewAdapter<Model> stack = mStack;
         // Remove the view associated with this task, we can't rely on updateTransforms
         // to work here because the task is no longer in the list
         StackViewCard tv = getChildViewForIndex(removedTask);
-        StackViewCardHolder holder = mViewHolderMap.get(tv);
+        StackViewCardHolder<Model> holder = mViewHolderMap.get(tv);
 
         // Notify the callback that we've removed the task and it can clean up after it
         dismissedListener.onCardDismissed(removedTask);
 
-        if (tv != null && holder!=null) {
+        if (tv != null && holder != null) {
             holder.setPosition(-1);
             mViewPool.returnObjectToPool(holder);
         }
 
-        for (StackViewCardHolder vh : mViewHolderMap.values()) {
+        for (StackViewCardHolder<Model> vh : mViewHolderMap.values()) {
             if (vh.getPosition() > removedTask) {
-                int newPosition = vh.getPosition()-1;
+                int newPosition = vh.getPosition() - 1;
                 vh.setPosition(newPosition);
-                mStack.bindCardHolder(vh,newPosition);
+                mStack.bindCardHolder(vh, newPosition);
             }
         }
 
@@ -457,21 +502,20 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
     }
 
     public void onCardDismissed(StackViewCard tv) {
-
-        StackViewCardHolder vh = mViewHolderMap.get(tv);
-        if (vh!=null) {
+        StackViewCardHolder<Model> vh = mViewHolderMap.get(tv);
+        if (vh != null) {
             int taskIndex = vh.getPosition();
-            mStack.notifyDataSetRemoved(taskIndex);
+            mStack.notifyDataRemoved(taskIndex);
         }
     }
 
     @Override
-    public StackViewCardHolder createObject(Context context) {
+    public StackViewCardHolder<Model> createObject(Context context) {
         return mStack.createCardHolder(context, mConfig);
     }
 
     @Override
-    public void prepareObjectToEnterPool(StackViewCardHolder vh) {
+    public void prepareObjectToEnterPool(StackViewCardHolder<Model> vh) {
 
         mViewHolderMap.remove(vh.getContainer());
         // Detach the view from the hierarchy
@@ -482,7 +526,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
     }
 
     @Override
-    public void prepareObjectToLeavePool(StackViewCardHolder vh, Integer position, boolean isNewView) {
+    public void prepareObjectToLeavePool(StackViewCardHolder<Model> vh, Integer position, boolean isNewView) {
         // Rebind the task and request that this task's data be filled into the TaskView
 
         mViewHolderMap.put(vh.getContainer(), vh);
@@ -496,9 +540,9 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
         if (taskIndex != -1) {
             int childCount = getChildCount();
             for (int i = 0; i < childCount; i++) {
-                StackViewCard insertTV = (StackViewCard)getChildAt(i);
-                StackViewCardHolder holder = mViewHolderMap.get(insertTV);
-                if (holder!=null && taskIndex < holder.getPosition()) {
+                StackViewCard insertTV = (StackViewCard) getChildAt(i);
+                StackViewCardHolder<Model> holder = mViewHolderMap.get(insertTV);
+                if (holder != null && taskIndex < holder.getPosition()) {
                     insertIndex = i;
                     break;
                 }
@@ -517,7 +561,7 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
     }
 
     @Override
-    public boolean hasPreferredData(StackViewCardHolder vh, Integer preferredData) {
+    public boolean hasPreferredData(StackViewCardHolder<Model> vh, Integer preferredData) {
         return (vh.getPosition() == preferredData);
     }
 
@@ -525,11 +569,13 @@ public class StackView extends FrameLayout implements StackViewAdapter.Callbacks
     @Override
     public void onScrollChanged(float p) {
         requestSynchronizeStackViewsWithModel();
+        invalidateOnAnimation();
+    }
+
+    private void invalidateOnAnimation() {
         if (Build.VERSION.SDK_INT >= 16) {
             postInvalidateOnAnimation();
-        }
-        else
-        {
+        } else {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {

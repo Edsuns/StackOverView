@@ -10,74 +10,96 @@ import com.s0n1.overview.views.StackViewCard;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class StackViewAdapter<VH extends StackViewCardHolder, Model> {
+public abstract class StackViewAdapter<Model> {
 
-    /** Task stack callbacks */
-    public interface Callbacks {
+    /**
+     * Task stack callbacks
+     */
+    public interface Callback {
         void onCardAdded();
-        void onCardRemoved(StackViewAdapter adapter, int position);
+
+        void onCardRemoved(int position);
+
+        void onCardChange(int position);
     }
 
-    private Callbacks mCallbacks;
+    private Callback mCallback;
 
-    //这个只是单纯用来计数的
-    private List<Model> mItems = new ArrayList <>();
+    private List<Model> mItems = new ArrayList<>();
 
-    public StackViewAdapter() {}
-
-    protected StackViewAdapter(List<Model> models) {
-        if (models != null) {
-            mItems = models;
+    protected StackViewAdapter(List<Model> items) {
+        if (items != null) {
+            mItems = items;
         }
     }
 
-    /** Sets the callbacks for this task stack */
-    public void setCallbacks(Callbacks cb) {
-        mCallbacks = cb;
+    /**
+     * Sets the callbacks for this task stack
+     */
+    public void setCallbacks(Callback cb) {
+        mCallback = cb;
     }
 
-    public void notifyDataAdded(Model model) {
-        mItems.add(model);
+    public void notifyDataAdded(Model item) {
+        mItems.add(item);
+
+        if (mCallback != null) {
+            // Notify
+            mCallback.onCardAdded();
+        }
     }
 
-    /** Removes a task */
-    public void notifyDataSetRemoved(int position) {
+    /**
+     * Removes a task
+     */
+    public void notifyDataRemoved(int position) {
         if (position < 0 || position >= mItems.size()) {
             throw new IllegalArgumentException("Position is out of bounds.");
         }
 
         mItems.remove(position);
 
-        if (mCallbacks != null) {
+        if (mCallback != null) {
             // Notify that a task has been removed
-            mCallbacks.onCardRemoved(this, position);
+            mCallback.onCardRemoved(position);
         }
     }
 
-    public List<Model> getData() { return mItems;}
+    public void notifyDataChange(Model newItem, int position) {
+        mItems.remove(position);
+        mItems.add(newItem);
 
-    public abstract VH onCreateCardHolder(Context context, ViewGroup parent);
+        if (mCallback != null) {
+            // Notify
+            mCallback.onCardChange(position);
+        }
+    }
 
-    /**
-     * This method is expected to populate the view in vh with the model in vh.
-     */
-    public abstract void onBindCardHolder(VH vh);
+    public List<Model> getData() {
+        return mItems;
+    }
 
     public final int getNumberOfItems() {
         return mItems.size();
     }
 
-    public final VH createCardHolder(Context context, OverViewConfiguration config) {
-
+    public final StackViewCardHolder<Model> createCardHolder(Context context, OverViewConfiguration config) {
         StackViewCard container = new StackViewCard(context);
         container.setConfig(config);
-        VH vh = onCreateCardHolder(context, container);
+        StackViewCardHolder<Model> vh = onCreateCardHolder(context, container);
         vh.setContainer(container);
         return vh;
     }
 
-    public final void bindCardHolder(VH vh, int position) {
+    public final void bindCardHolder(StackViewCardHolder<Model> vh, int position) {
         vh.model = mItems.get(position);
         onBindCardHolder(vh);
     }
+
+    public abstract StackViewCardHolder<Model> onCreateCardHolder(Context context, ViewGroup parent);
+
+    /**
+     * This method is expected to populate the view in vh with the model in vh.
+     */
+    public abstract void onBindCardHolder(StackViewCardHolder<Model> vh);
 }

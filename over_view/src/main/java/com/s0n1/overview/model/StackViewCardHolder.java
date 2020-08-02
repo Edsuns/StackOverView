@@ -4,18 +4,16 @@ import android.view.View;
 
 import com.s0n1.overview.views.StackViewCard;
 
-public class StackViewCardHolder<V extends View, Model>
-{
-    public final V itemView;
+public class StackViewCardHolder<Model> {
+    public final View itemView;
     public Model model;
 
     private StackViewCard mContainer;
 
     private int mCurrentPosition = -1;
 
-    public StackViewCardHolder(V view)
-    {
-        this.itemView = view;
+    public StackViewCardHolder(View view) {
+        itemView = view;
     }
 
     public void setPosition(int position) {
@@ -26,8 +24,7 @@ public class StackViewCardHolder<V extends View, Model>
         return mCurrentPosition;
     }
 
-    public StackViewCard getContainer()
-    {
+    public StackViewCard getContainer() {
         return mContainer;
     }
 

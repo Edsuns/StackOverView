@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/refresh_card"
+    <item android:id="@+id/scroll_card"
+        android:title="SCROLL"
+        android:showAsAction="always"/>
+    <item android:id="@+id/change_card"
         android:title="CHANGE"
         android:showAsAction="always"/>
     <item android:id="@+id/add_card"

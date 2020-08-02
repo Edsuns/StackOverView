@@ -35,6 +35,9 @@ class StackViewLayoutAlgorithm {
     private static final float LogBase = 3000;
     private static final int PrecisionSteps = 250;
 
+    // 最底部的卡片被挡住的区域 (0f to 0.7f)
+    private static final float SCROLL_HIDED_BOTTOM_RATE = 0.38f;
+
     //xp[PrecisionSteps] 这个是每段x的平均渐进累加值，与弧度渐进值的靠近比率。也就是说会越来越快
     private static float[] xp;
 
@@ -48,7 +51,9 @@ class StackViewLayoutAlgorithm {
         initializeCurve();
     }
 
-    /** Computes the stack and task rects */
+    /**
+     * Computes the stack and task rects
+     */
     void computeRects(int windowWidth, int windowHeight, Rect taskStackBounds) {
         // Compute the stack rects
         mViewRect.set(0, 0, windowWidth, windowHeight);
@@ -73,8 +78,10 @@ class StackViewLayoutAlgorithm {
         mBetweenAffiliationOffset = (int) (visibleTaskPct * mTaskRect.height());
     }
 
-    /** Computes the minimum and maximum scroll progress values.  This method may be called before
-     * the RecentsConfiguration is set, so we need to pass in the alt-tab state. */
+    /**
+     * Computes the minimum and maximum scroll progress values.  This method may be called before
+     * the RecentsConfiguration is set, so we need to pass in the alt-tab state.
+     */
     void computeMinMaxScroll(int itemCount) {
         // Clear the progress map
         mTaskProgressMap.clear();
@@ -109,11 +116,14 @@ class StackViewLayoutAlgorithm {
         mMaxScrollP = pAtFrontMostCardTop - ((1f - pTaskHeightOffset - pNavBarOffset));
         mMinScrollP = itemCount == 1 ? Math.max(mMaxScrollP, 0f) : 0f;
         mInitialScrollP = Math.max(0, pAtFrontMostCardTop);
+
+        if (itemCount != 1)
+            mMaxScrollP -= SCROLL_HIDED_BOTTOM_RATE;
     }
 
-    /** Update/get the transform
+    /**
+     * Update/get the transform
      * 由初始化的mTaskProgressMap来构建 view各自OverviewCardTransform 的绘制
-     *
      */
     StackViewCardTransform getStackTransform(int position, float stackScroll, StackViewCardTransform transformOut,
                                              StackViewCardTransform prevTransform) {
@@ -125,7 +135,9 @@ class StackViewLayoutAlgorithm {
         return getStackTransform(mTaskProgressMap.get(position), stackScroll, transformOut, prevTransform);
     }
 
-    /** Update/get the transform */
+    /**
+     * Update/get the transform
+     */
     StackViewCardTransform getStackTransform(float taskProgress, float stackScroll, StackViewCardTransform transformOut, StackViewCardTransform prevTransform) {
         float pTaskRelative = taskProgress - stackScroll;
         float pBounded = Math.max(0, Math.min(pTaskRelative, 1f));
@@ -167,7 +179,9 @@ class StackViewLayoutAlgorithm {
         return mTaskProgressMap.get(index);
     }
 
-    /** Initializes the curve. */
+    /**
+     * Initializes the curve.
+     */
     private static void initializeCurve() {
         if (xp != null && px != null) return;
         xp = new float[PrecisionSteps + 1];
@@ -184,7 +198,7 @@ class StackViewLayoutAlgorithm {
             //fx[xStep]：每个阶段的y值  （0->1）
 
             fx[xStep] = logFunc(x);
-            Log.e("fx[xStep]: ","fx[xStep] : "+xStep  +"  "+fx[xStep]);
+            Log.e("fx[xStep]: ", "fx[xStep] : " + xStep + "  " + fx[xStep]);
             x += step;
         }
 
@@ -243,17 +257,23 @@ class StackViewLayoutAlgorithm {
 
     }
 
-    /** Reverses and scales out x. */
+    /**
+     * Reverses and scales out x.
+     */
     private static float reverse(float x) {
         return (-x * XScale) + 1;
     }
 
-    /** The log function describing the curve. */
+    /**
+     * The log function describing the curve.
+     */
     private static float logFunc(float x) {
         return 1f - (float) (Math.pow(LogBase, reverse(x))) / (LogBase);
     }
 
-    /** Converts from the progress along the curve to a screen coordinate. */
+    /**
+     * Converts from the progress along the curve to a screen coordinate.
+     */
     private int curveProgressToScreenY(float p) {
         if (p < 0 || p > 1) return mStackVisibleRect.top + (int) (p * mStackVisibleRect.height());
         float pIndex = p * PrecisionSteps;
@@ -268,8 +288,10 @@ class StackViewLayoutAlgorithm {
         return mStackVisibleRect.top + (int) (x * mStackVisibleRect.height());
     }
 
-    /** Converts from the progress along the curve to a scale.
+    /**
+     * Converts from the progress along the curve to a scale.
      * 扩大的范围线性计算
+     *
      * @param p 当前比率
      * @return 经由缩小值计算后的比率
      */
@@ -283,7 +305,7 @@ class StackViewLayoutAlgorithm {
 
     /**
      * 纵坐标装换成曲线走势
-     *  Converts from a screen coordinate to the progress along the curve.
+     * Converts from a screen coordinate to the progress along the curve.
      *
      * @param screenY 需要转换的高度
      * @return 输入高度实际占曲线的百分比

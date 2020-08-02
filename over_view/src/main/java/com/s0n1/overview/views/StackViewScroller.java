@@ -31,17 +31,23 @@ class StackViewScroller {
         setStackScroll(getStackScroll());
     }
 
-    /** Sets the callbacks */
+    /**
+     * Sets the callbacks
+     */
     void setCallbacks(Callbacks cb) {
         mCb = cb;
     }
 
-    /** Gets the current stack scroll */
+    /**
+     * Gets the current stack scroll
+     */
     float getStackScroll() {
         return mStackScrollP;
     }
 
-    /** Sets the current stack scroll */
+    /**
+     * Sets the current stack scroll
+     */
     void setStackScroll(float s) {
         mStackScrollP = s;
         if (mCb != null) {
@@ -49,17 +55,23 @@ class StackViewScroller {
         }
     }
 
-    /** Sets the current stack scroll without calling the callback. */
+    /**
+     * Sets the current stack scroll without calling the callback.
+     */
     private void setStackScrollRaw(float s) {
         mStackScrollP = s;
     }
 
-    /** Sets the current stack scroll to the initial state when you first enter recents */
+    /**
+     * Sets the current stack scroll to the initial state when you first enter recents
+     */
     void setStackScrollToInitialState() {
         setStackScroll(getBoundedStackScroll(mLayoutAlgorithm.mInitialScrollP));
     }
 
-    /** Bounds the current scroll if necessary */
+    /**
+     * Bounds the current scroll if necessary
+     */
     void boundScroll() {
         float curScroll = getStackScroll();
         float newScroll = getBoundedStackScroll(curScroll);
@@ -68,12 +80,16 @@ class StackViewScroller {
         }
     }
 
-    /** Returns the bounded stack scroll */
+    /**
+     * Returns the bounded stack scroll
+     */
     private float getBoundedStackScroll(float scroll) {
         return Math.max(mLayoutAlgorithm.mMinScrollP, Math.min(mLayoutAlgorithm.mMaxScrollP, scroll));
     }
 
-    /** Returns the amount that the aboslute value of how much the scroll is out of bounds. */
+    /**
+     * Returns the amount that the aboslute value of how much the scroll is out of bounds.
+     */
     float getScrollAmountOutOfBounds(float scroll) {
         if (scroll < mLayoutAlgorithm.mMinScrollP) {
             return Math.abs(scroll - mLayoutAlgorithm.mMinScrollP);
@@ -83,12 +99,16 @@ class StackViewScroller {
         return 0f;
     }
 
-    /** Returns whether the specified scroll is out of bounds */
+    /**
+     * Returns whether the specified scroll is out of bounds
+     */
     boolean isScrollOutOfBounds() {
         return Float.compare(getScrollAmountOutOfBounds(mStackScrollP), 0f) != 0;
     }
 
-    /** Animates the stack scroll into bounds */
+    /**
+     * Animates the stack scroll into bounds
+     */
     void animateBoundScroll() {
         float curScroll = getStackScroll();
         float newScroll = getBoundedStackScroll(curScroll);
@@ -98,8 +118,10 @@ class StackViewScroller {
         }
     }
 
-    /** Animates the stack scroll */
-    private void animateScroll(float curScroll, float newScroll) {
+    /**
+     * Animates the stack scroll
+     */
+    void animateScroll(float curScroll, float newScroll) {
         // Abort any current animations
         stopScroller();
         stopBoundScrollAnimation();
@@ -122,7 +144,9 @@ class StackViewScroller {
         mScrollAnimator.start();
     }
 
-    /** Aborts any current stack scrolls */
+    /**
+     * Aborts any current stack scrolls
+     */
     void stopBoundScrollAnimation() {
         if (mScrollAnimator != null) {
             mScrollAnimator.removeAllListeners();
@@ -140,7 +164,9 @@ class StackViewScroller {
         return (float) s / mLayoutAlgorithm.mStackVisibleRect.height();
     }
 
-    /** Called from the view draw, computes the next scroll. */
+    /**
+     * Called from the view draw, computes the next scroll.
+     */
     void computeScroll() {
         if (mScroller.computeScrollOffset()) {
             float scroll = scrollRangeToProgress(mScroller.getCurrY());
@@ -151,12 +177,16 @@ class StackViewScroller {
         }
     }
 
-    /** Returns whether the overscroller is scrolling. */
+    /**
+     * Returns whether the overscroller is scrolling.
+     */
     boolean isScrolling() {
         return !mScroller.isFinished();
     }
 
-    /** Stops the scroller and any current fling. */
+    /**
+     * Stops the scroller and any current fling.
+     */
     void stopScroller() {
         if (!mScroller.isFinished()) {
             mScroller.abortAnimation();
