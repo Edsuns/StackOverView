@@ -14,30 +14,15 @@
  * limitations under the License.
  */
 
-package com.s0n1.overview.misc;
+package com.s0n1.stackview.misc;
 
-import android.annotation.SuppressLint;
 import android.graphics.Rect;
-
-import java.lang.reflect.Method;
 
 /* Common code */
 public class Utilities {
-
-    static {
-        try {
-            @SuppressLint("PrivateApi") Class<?> c = Class.forName("android.view.GLES20Canvas");
-            // Reflection methods for altering shadows
-            Method sPropertyMethod = c.getDeclaredMethod("setProperty", String.class, String.class);
-            if (!sPropertyMethod.isAccessible()) sPropertyMethod.setAccessible(true);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /** Scales a rect about its centroid */
+    /**
+     * Scales a rect about its centroid
+     */
     public static void scaleRectAboutCenter(Rect r, float scale) {
         if (scale != 1.0f) {
             int cx = r.centerX();
@@ -50,5 +35,4 @@ public class Utilities {
             r.offset(cx, cy);
         }
     }
-
 }

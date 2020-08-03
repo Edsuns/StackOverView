@@ -1,9 +1,11 @@
-package com.s0n1.overview.views;
+package com.s0n1.stackview.views;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -11,12 +13,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.s0n1.overview.misc.OverViewConfiguration;
+import com.s0n1.stackview.misc.StackViewConfiguration;
 
 /* A task view */
 public class StackViewCard extends FrameLayout {
 
-    OverViewConfiguration mConfig;
+    StackViewConfiguration mConfig;
 
     float mTaskProgress;
     ObjectAnimator mTaskProgressAnimator;
@@ -34,23 +36,22 @@ public class StackViewCard extends FrameLayout {
 
 
     public StackViewCard(Context context) {
-        super(context);
-        init(context);
+        this(context, null);
     }
 
     public StackViewCard(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
+        this(context, attrs, 0);
     }
 
     public StackViewCard(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
+        this(context, attrs, defStyleAttr, 0);
     }
 
-    private void init(Context context) {
-        setBackgroundColor(Color.TRANSPARENT);
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public StackViewCard(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
 
+        setBackground(new FakeShadowDrawable(context.getResources()));
         mContentContainer = new LinearLayout(context);
         mContentContainer.setOrientation(LinearLayout.VERTICAL);
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -61,8 +62,7 @@ public class StackViewCard extends FrameLayout {
 
     //将子view的宽高设置入此父view
     @Override
-    public void getHitRect(Rect outRect)
-    {
+    public void getHitRect(Rect outRect) {
         Rect contentRect = new Rect();
         mContent.getHitRect(contentRect);
         super.getHitRect(outRect);
@@ -72,13 +72,11 @@ public class StackViewCard extends FrameLayout {
         outRect.bottom = outRect.top + contentRect.height();
     }
 
-    public void setConfig(OverViewConfiguration config)
-    {
+    public void setConfig(StackViewConfiguration config) {
         mConfig = config;
     }
 
-    public void setContent(View content)
-    {
+    public void setContent(View content) {
         mContent = content;
         mContentContainer.removeAllViews();
         if (mContent != null) {
@@ -103,7 +101,9 @@ public class StackViewCard extends FrameLayout {
         setMeasuredDimension(width, height);
     }
 
-    /** Synchronizes this view's properties with the task's transform */
+    /**
+     * Synchronizes this view's properties with the task's transform
+     */
     void updateViewPropertiesToCardTransform(StackViewCardTransform toTransform) {
         updateViewPropertiesToCardTransform(toTransform, 0, null);
     }
@@ -129,27 +129,37 @@ public class StackViewCard extends FrameLayout {
         }
     }
 
-    /** Resets this view's properties */
+    /**
+     * Resets this view's properties
+     */
     void resetViewProperties() {
         StackViewCardTransform.reset(this);
     }
 
-    /** Prepares this task view for the enter-recents animations.  This is called earlier in the
-     * first layout because the actual animation into recents may take a long time. */
+    /**
+     * Prepares this task view for the enter-recents animations.  This is called earlier in the
+     * first layout because the actual animation into recents may take a long time.
+     */
     void prepareEnterRecentsAnimation() {
     }
 
-    /** Sets the current task progress. */
+    /**
+     * Sets the current task progress.
+     */
     public void setTaskProgress(float p) {
         mTaskProgress = p;
     }
 
-    /** Returns the current task progress. */
+    /**
+     * Returns the current task progress.
+     */
     public float getTaskProgress() {
         return mTaskProgress;
     }
 
-    /** Enables/disables handling touch on this task view. */
+    /**
+     * Enables/disables handling touch on this task view.
+     */
     void setTouchEnabled(boolean enabled) {
         setOnClickListener(!enabled ? null : new OnClickListener() {
             @Override

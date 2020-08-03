@@ -6,7 +6,7 @@
     android:paddingTop="32dp">
 
     <!-- Recents View -->
-    <com.s0n1.overview.views.StackView
+    <com.s0n1.stackview.views.StackView
         android:id="@+id/recents_view"
         android:layout_width="match_parent" 
         android:layout_height="match_parent"

@@ -1,4 +1,4 @@
-package com.s0n1.overview.views;
+package com.s0n1.stackview.views;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -7,7 +7,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.widget.OverScroller;
 
-import com.s0n1.overview.misc.OverViewConfiguration;
+import com.s0n1.stackview.misc.StackViewConfiguration;
 
 /* The scrolling logic for a TaskStackView */
 class StackViewScroller {
@@ -15,7 +15,7 @@ class StackViewScroller {
         void onScrollChanged(float p);
     }
 
-    private OverViewConfiguration mConfig;
+    private StackViewConfiguration mConfig;
     private StackViewLayoutAlgorithm mLayoutAlgorithm;
     private Callbacks mCb;
 
@@ -24,7 +24,7 @@ class StackViewScroller {
     OverScroller mScroller;
     ObjectAnimator mScrollAnimator;
 
-    StackViewScroller(Context context, OverViewConfiguration config, StackViewLayoutAlgorithm layoutAlgorithm) {
+    StackViewScroller(Context context, StackViewConfiguration config, StackViewLayoutAlgorithm layoutAlgorithm) {
         mConfig = config;
         mScroller = new OverScroller(context);
         mLayoutAlgorithm = layoutAlgorithm;

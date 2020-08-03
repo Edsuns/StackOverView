@@ -1,10 +1,10 @@
-package com.s0n1.overview.views;
+package com.s0n1.stackview.views;
 
 import android.graphics.Rect;
 import android.util.Log;
 
-import com.s0n1.overview.misc.OverViewConfiguration;
-import com.s0n1.overview.misc.Utilities;
+import com.s0n1.stackview.misc.StackViewConfiguration;
+import com.s0n1.stackview.misc.Utilities;
 
 import java.util.HashMap;
 
@@ -13,7 +13,7 @@ class StackViewLayoutAlgorithm {
     //最小卡片的显示比率
     private static final float StackPeekMinScale = 0.8f; // The min scale of the last card in the peek area
 
-    private OverViewConfiguration mConfig;
+    private StackViewConfiguration mConfig;
 
     // The various rects that define the stack view
     private Rect mViewRect = new Rect();
@@ -36,7 +36,7 @@ class StackViewLayoutAlgorithm {
     private static final int PrecisionSteps = 250;
 
     // 最底部的卡片被挡住的区域 (0f to 0.7f)
-    private static final float SCROLL_HIDED_BOTTOM_RATE = 0.38f;
+    private static final float SCROLL_HIDED_BOTTOM_RATE = 0.4f;
 
     //xp[PrecisionSteps] 这个是每段x的平均渐进累加值，与弧度渐进值的靠近比率。也就是说会越来越快
     private static float[] xp;
@@ -44,7 +44,7 @@ class StackViewLayoutAlgorithm {
     //当前阶段总弧度，所占总体的百分比() （0->1）
     private static float[] px;
 
-    StackViewLayoutAlgorithm(OverViewConfiguration config) {
+    StackViewLayoutAlgorithm(StackViewConfiguration config) {
         mConfig = config;
 
         // Precompute the path

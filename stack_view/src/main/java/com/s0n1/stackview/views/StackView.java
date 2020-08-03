@@ -1,4 +1,4 @@
-package com.s0n1.overview.views;
+package com.s0n1.stackview.views;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
@@ -13,9 +13,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.s0n1.overview.misc.OverViewConfiguration;
-import com.s0n1.overview.model.StackViewAdapter;
-import com.s0n1.overview.model.StackViewCardHolder;
+import com.s0n1.stackview.misc.StackViewConfiguration;
+import com.s0n1.stackview.model.StackViewAdapter;
+import com.s0n1.stackview.model.StackViewCardHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,12 +35,12 @@ public class StackView<Model> extends FrameLayout implements StackViewAdapter.Ca
         void onAllCardsDismissed();
     }
 
-    OverViewConfiguration mConfig;
+    StackViewConfiguration mConfig;
 
     StackViewAdapter<Model> mStack;
     StackViewLayoutAlgorithm mLayoutAlgorithm;
     StackViewScroller mStackScroller;
-    StackViewTouchHandler mTouchHandler;
+    StackViewTouchHandler<Model> mTouchHandler;
     OnDismissedListener dismissedListener;
     ObjectPool<StackViewCardHolder<Model>, Integer> mViewPool;
     ArrayList<StackViewCardTransform> mCurrentCardTransforms = new ArrayList<>();
@@ -76,13 +76,13 @@ public class StackView<Model> extends FrameLayout implements StackViewAdapter.Ca
 
     public StackView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mConfig = new OverViewConfiguration(context);
+        mConfig = new StackViewConfiguration(context);
         mViewPool = new ObjectPool<>(context, this);
         mInflater = LayoutInflater.from(context);
         mLayoutAlgorithm = new StackViewLayoutAlgorithm(mConfig);
         mStackScroller = new StackViewScroller(context, mConfig, mLayoutAlgorithm);
         mStackScroller.setCallbacks(this);
-        mTouchHandler = new StackViewTouchHandler(context, this, mConfig, mStackScroller);
+        mTouchHandler = new StackViewTouchHandler<>(context, this, mConfig, mStackScroller);
     }
 
     public void setAdapter(StackViewAdapter<Model> adapter) {
@@ -91,9 +91,9 @@ public class StackView<Model> extends FrameLayout implements StackViewAdapter.Ca
     }
 
     /**
-     * Sets the callbacks
+     * Sets the callback
      */
-    public void setCallbacks(OnDismissedListener cb) {
+    public void setCallback(OnDismissedListener cb) {
         dismissedListener = cb;
     }
 
@@ -329,7 +329,7 @@ public class StackView<Model> extends FrameLayout implements StackViewAdapter.Ca
     /**
      * Computes the stack and task rects
      */
-    public void computeRects(int windowWidth, int windowHeight, Rect taskStackBounds) {
+    void computeRects(int windowWidth, int windowHeight, Rect taskStackBounds) {
         // Compute the rects in the stack algorithm
         mLayoutAlgorithm.computeRects(windowWidth, windowHeight, taskStackBounds);
 
@@ -411,13 +411,21 @@ public class StackView<Model> extends FrameLayout implements StackViewAdapter.Ca
             mAwaitingFirstLayout = false;
             onFirstLayout();
         }
+
+        if (changed && !mAwaitingFirstLayout) {// Fix view display issue after orientation changed.
+            float scroll = mStackScroller.getStackScroll();
+            mStackScroller.setStackScrollToInitialState();
+            if (scroll > mLayoutAlgorithm.mMaxScrollP) {
+                scroll = mLayoutAlgorithm.mMaxScrollP;
+            }
+            mStackScroller.animateScroll(scroll, scroll);
+        }
     }
 
     /**
      * Handler for the first layout.
      */
     void onFirstLayout() {
-
         for (Map.Entry<StackViewCard, StackViewCardHolder<Model>> entry : mViewHolderMap.entrySet()) {
             entry.getKey().prepareEnterRecentsAnimation();
         }
@@ -447,15 +455,14 @@ public class StackView<Model> extends FrameLayout implements StackViewAdapter.Ca
         animateScrollTo(mStack.getNumberOfItems() - 1);
     }
 
-    public void onCardRemoved(int removedTask) {
-        final StackViewAdapter<Model> stack = mStack;
+    public void onCardRemoved(int position) {
         // Remove the view associated with this task, we can't rely on updateTransforms
         // to work here because the task is no longer in the list
-        StackViewCard tv = getChildViewForIndex(removedTask);
+        StackViewCard tv = getChildViewForIndex(position);
         StackViewCardHolder<Model> holder = mViewHolderMap.get(tv);
 
         // Notify the callback that we've removed the task and it can clean up after it
-        dismissedListener.onCardDismissed(removedTask);
+        dismissedListener.onCardDismissed(position);
 
         if (tv != null && holder != null) {
             holder.setPosition(-1);
@@ -463,33 +470,15 @@ public class StackView<Model> extends FrameLayout implements StackViewAdapter.Ca
         }
 
         for (StackViewCardHolder<Model> vh : mViewHolderMap.values()) {
-            if (vh.getPosition() > removedTask) {
+            if (vh.getPosition() > position) {
                 int newPosition = vh.getPosition() - 1;
                 vh.setPosition(newPosition);
                 mStack.bindCardHolder(vh, newPosition);
             }
         }
 
-        // Get the stack scroll of the task to anchor to (since we are removing something, the front
-        // most task will be our anchor task)
-        int anchorPosition = -1;
-        float prevAnchorTaskScroll = 0;
-        boolean pullStackForward = stack.getNumberOfItems() > 0;
-        if (pullStackForward) {
-            anchorPosition = stack.getNumberOfItems() - 1;
-            prevAnchorTaskScroll = mLayoutAlgorithm.getStackScrollForTask(anchorPosition);
-        }
-
         // Update the min/max scroll and animate other task views into their new positions
         updateMinMaxScroll(true);
-
-        // Offset the stack by as much as the anchor task would otherwise move back
-        if (pullStackForward) {
-            float anchorTaskScroll = mLayoutAlgorithm.getStackScrollForTask(anchorPosition);
-            mStackScroller.setStackScroll(mStackScroller.getStackScroll() + (anchorTaskScroll
-                    - prevAnchorTaskScroll));
-            mStackScroller.boundScroll();
-        }
 
         // Animate all the tasks into place
         requestSynchronizeStackViewsWithModel(200);
@@ -501,7 +490,7 @@ public class StackView<Model> extends FrameLayout implements StackViewAdapter.Ca
         }
     }
 
-    public void onCardDismissed(StackViewCard tv) {
+    void onCardDismissed(StackViewCard tv) {
         StackViewCardHolder<Model> vh = mViewHolderMap.get(tv);
         if (vh != null) {
             int taskIndex = vh.getPosition();

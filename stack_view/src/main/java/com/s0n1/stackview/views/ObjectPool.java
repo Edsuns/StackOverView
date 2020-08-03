@@ -1,4 +1,4 @@
-package com.s0n1.overview.views;
+package com.s0n1.stackview.views;
 
 import android.content.Context;
 
@@ -9,8 +9,11 @@ class ObjectPool<V, T> {
 
     public interface ObjectPoolConsumer<V, T> {
         V createObject(Context context);
+
         void prepareObjectToEnterPool(V v);
+
         void prepareObjectToLeavePool(V v, T prepareData, boolean isNewObject);
+
         boolean hasPreferredData(V v, T preferredData);
     }
 
@@ -18,19 +21,25 @@ class ObjectPool<V, T> {
     private ObjectPoolConsumer<V, T> mObjectCreator;
     private LinkedList<V> mPool = new LinkedList<>();
 
-    /** Initializes the pool with a fixed predetermined pool size */
+    /**
+     * Initializes the pool with a fixed predetermined pool size
+     */
     ObjectPool(Context context, ObjectPoolConsumer<V, T> objectCreator) {
         mContext = context;
         mObjectCreator = objectCreator;
     }
 
-    /** Returns a view into the pool */
+    /**
+     * Returns a view into the pool
+     */
     void returnObjectToPool(V v) {
         mObjectCreator.prepareObjectToEnterPool(v);
         mPool.push(v);
     }
 
-    /** Gets a view from the pool and prepares it */
+    /**
+     * Gets a view from the pool and prepares it
+     */
     V pickUpObjectFromPool(T preferredData, T prepareData) {
         V v = null;
         boolean isNewObject = false;

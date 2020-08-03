@@ -1,8 +1,8 @@
-package com.s0n1.overview.model;
+package com.s0n1.stackview.model;
 
 import android.view.View;
 
-import com.s0n1.overview.views.StackViewCard;
+import com.s0n1.stackview.views.StackViewCard;
 
 public class StackViewCardHolder<Model> {
     public final View itemView;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.s0n1.overview.views;
+package com.s0n1.stackview.views;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -27,7 +27,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import com.s0n1.overview.misc.OverViewConfiguration;
+import com.s0n1.stackview.misc.StackViewConfiguration;
 
 /**
  * This class facilitates swipe to dismiss. It defines an interface to be implemented by the
@@ -35,15 +35,15 @@ import com.s0n1.overview.misc.OverViewConfiguration;
  * events and translates / fades / animates the view as it is dismissed.
  */
 class SwipeHelper {
-    private static final int X = 0;
-    private static final int Y = 1;
+    static final int X = 0;
+    static final int Y = 1;
 
     private static LinearInterpolator sLinearInterpolator = new LinearInterpolator();
 
     private static final float SWIPE_ESCAPE_VELOCITY = 100f; // dp/sec
-    private  static final int DEFAULT_ESCAPE_ANIMATION_DURATION = 75; // ms
-    private  static final int MAX_ESCAPE_ANIMATION_DURATION = 150; // ms
-    private  static final int MAX_DISMISS_VELOCITY = 2000; // dp/sec
+    private static final int DEFAULT_ESCAPE_ANIMATION_DURATION = 75; // ms
+    private static final int MAX_ESCAPE_ANIMATION_DURATION = 150; // ms
+    private static final int MAX_DISMISS_VELOCITY = 2000; // dp/sec
     private static final int SNAP_ANIM_LEN = 250; // ms
 
     // where fade starts
@@ -60,10 +60,10 @@ class SwipeHelper {
     private View mCurrView;
     private float mDensityScale;
 
-    private OverViewConfiguration mConfig;
+    private StackViewConfiguration mConfig;
 
     SwipeHelper(int swipeDirection, Callback callback, float densityScale,
-                float pagingTouchSlop, OverViewConfiguration config) {
+                float pagingTouchSlop, StackViewConfiguration config) {
         mCallback = callback;
         mSwipeDirection = swipeDirection;
         mVelocityTracker = VelocityTracker.obtain();
@@ -162,7 +162,7 @@ class SwipeHelper {
     }
 
     /**
-     * @param view The view to be dismissed
+     * @param view     The view to be dismissed
      * @param velocity The desired pixels/second speed at which the view should move
      */
     private void dismissChild(final View view, float velocity) {
@@ -179,8 +179,8 @@ class SwipeHelper {
         int duration = MAX_ESCAPE_ANIMATION_DURATION;
         if (velocity != 0) {
             duration = Math.min(duration,
-                                (int) (Math.abs(newPos - getTranslation(view)) *
-                                        1000f / Math.abs(velocity)));
+                    (int) (Math.abs(newPos - getTranslation(view)) *
+                            1000f / Math.abs(velocity)));
         } else {
             duration = DEFAULT_ESCAPE_ANIMATION_DURATION;
         }
@@ -200,7 +200,7 @@ class SwipeHelper {
         anim.addUpdateListener(new AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                if ( canAnimViewBeDismissed) {
+                if (canAnimViewBeDismissed) {
                     view.setAlpha(getAlphaForOffset(view));
                 }
             }
@@ -271,20 +271,15 @@ class SwipeHelper {
             if (Math.abs(amount) >= size) {
                 amount = amount > 0 ? maxScrollDistance : -maxScrollDistance;
             } else {
-                amount = maxScrollDistance * (float) Math.sin((amount/size)*(Math.PI/2));
+                amount = maxScrollDistance * (float) Math.sin((amount / size) * (Math.PI / 2));
             }
         }
-        ((View)mCurrView.getParent()).invalidate();// 修复 首次左右滑动，卡片被裁切
         setTranslation(mCurrView, amount);
         float alpha = getAlphaForOffset(mCurrView);
         mCurrView.setAlpha(alpha);
     }
 
     private boolean isValidSwipeDirection() {
-        if (mSwipeDirection == X) {
-            return true;
-        }
-
         // Vertical swipes are always valid.
         return true;
     }

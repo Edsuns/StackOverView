@@ -1,4 +1,4 @@
-package com.s0n1.overview.views;
+package com.s0n1.stackview.views;
 
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
@@ -10,7 +10,7 @@ import android.view.animation.Interpolator;
 
 
 /* The transform state for a task view */
-public class StackViewCardTransform {
+class StackViewCardTransform {
     public int startDelay = 0;
     public int translationY = 0;
     public float translationZ = 0;
@@ -24,7 +24,9 @@ public class StackViewCardTransform {
         // Do nothing
     }
 
-    /** Resets the current transform */
+    /**
+     * Resets the current transform
+     */
     public void reset() {
         startDelay = 0;
         translationY = 0;
@@ -36,21 +38,28 @@ public class StackViewCardTransform {
         p = 0f;
     }
 
-    /** Convenience functions to compare against current property values */
+    /**
+     * Convenience functions to compare against current property values
+     */
     public boolean hasAlphaChangedFrom(float v) {
         return (Float.compare(alpha, v) != 0);
     }
+
     public boolean hasScaleChangedFrom(float v) {
         return (Float.compare(scale, v) != 0);
     }
+
     public boolean hasTranslationYChangedFrom(float v) {
         return (Float.compare(translationY, v) != 0);
     }
+
     public boolean hasTranslationZChangedFrom(float v) {
         return (Float.compare(translationZ, v) != 0);
     }
 
-    /** Applies this transform to a view. */
+    /**
+     * Applies this transform to a view.
+     */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void applyToTaskView(View v, int duration, Interpolator interp, boolean allowLayers,
                                 boolean allowShadows, ValueAnimator.AnimatorUpdateListener updateCallback) {
@@ -65,7 +74,7 @@ public class StackViewCardTransform {
             }
             if (hasScaleChangedFrom(v.getScaleX())) {
                 anim.scaleX(scale)
-                    .scaleY(scale);
+                        .scaleY(scale);
                 requiresLayers = true;
             }
             if (hasAlphaChangedFrom(v.getAlpha())) {
@@ -95,7 +104,9 @@ public class StackViewCardTransform {
         }
     }
 
-    /** Reset the transform on a view. */
+    /**
+     * Reset the transform on a view.
+     */
     public static void reset(View v) {
         v.setTranslationX(0f);
         v.setTranslationY(0f);

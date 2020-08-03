@@ -1,11 +1,10 @@
-
-package com.s0n1.overview.model;
+package com.s0n1.stackview.model;
 
 import android.content.Context;
 import android.view.ViewGroup;
 
-import com.s0n1.overview.misc.OverViewConfiguration;
-import com.s0n1.overview.views.StackViewCard;
+import com.s0n1.stackview.misc.StackViewConfiguration;
+import com.s0n1.stackview.views.StackViewCard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +82,7 @@ public abstract class StackViewAdapter<Model> {
         return mItems.size();
     }
 
-    public final StackViewCardHolder<Model> createCardHolder(Context context, OverViewConfiguration config) {
+    public final StackViewCardHolder<Model> createCardHolder(Context context, StackViewConfiguration config) {
         StackViewCard container = new StackViewCard(context);
         container.setConfig(config);
         StackViewCardHolder<Model> vh = onCreateCardHolder(context, container);

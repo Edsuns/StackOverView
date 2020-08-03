@@ -1,4 +1,4 @@
-package com.s0n1.overview.misc;
+package com.s0n1.stackview.misc;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -8,18 +8,24 @@ import android.util.TypedValue;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
-import com.s0n1.overview.R;
+import com.s0n1.stackview.R;
 
-public class OverViewConfiguration {
+public class StackViewConfiguration {
 
-    /** Interpolators */
+    /**
+     * Interpolators
+     */
     public Interpolator fastOutSlowInInterpolator;
     public Interpolator linearOutSlowInInterpolator;
 
-    /** Insets */
+    /**
+     * Insets
+     */
     private Rect displayRect = new Rect();
 
-    /** Task stack */
+    /**
+     * Task stack
+     */
     public int taskStackScrollDuration;
     public int taskStackTopPaddingPx;
     public float taskStackWidthPaddingPct;
@@ -28,8 +34,10 @@ public class OverViewConfiguration {
     public int taskViewTranslationZMinPx;
     public int taskViewTranslationZMaxPx;
 
-    /** Private constructor */
-    public OverViewConfiguration(Context context) {
+    /**
+     * Private constructor
+     */
+    public StackViewConfiguration(Context context) {
         fastOutSlowInInterpolator = AnimationUtils.loadInterpolator(context,
                 android.R.interpolator.accelerate_decelerate);
         linearOutSlowInInterpolator = AnimationUtils.loadInterpolator(context,
@@ -37,7 +45,9 @@ public class OverViewConfiguration {
         update(context);
     }
 
-    /** Updates the state, given the specified context */
+    /**
+     * Updates the state, given the specified context
+     */
     private void update(Context context) {
         Resources res = context.getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
@@ -65,6 +75,7 @@ public class OverViewConfiguration {
         taskViewTranslationZMinPx = res.getDimensionPixelSize(R.dimen.recents_task_view_z_min);
         taskViewTranslationZMaxPx = res.getDimensionPixelSize(R.dimen.recents_task_view_z_max);
     }
+
     /**
      * Returns the task stack bounds in the current orientation. These bounds do not account for
      * the system insets.
