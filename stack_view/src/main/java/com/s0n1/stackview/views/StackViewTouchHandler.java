@@ -139,6 +139,9 @@ class StackViewTouchHandler<Model> implements SwipeHelper.Callback {
                 if (mActivePointerId == INACTIVE_POINTER_ID) break;
 
                 int activePointerIndex = ev.findPointerIndex(mActivePointerId);
+                if (activePointerIndex < 0 || activePointerIndex >= ev.getPointerCount()) {
+                    break;// pointerIndex out of range
+                }
                 int y = (int) ev.getY(activePointerIndex);
                 if (Math.abs(y - mInitialMotionY) > mScrollTouchSlop) {
                     // Save the touch move info
