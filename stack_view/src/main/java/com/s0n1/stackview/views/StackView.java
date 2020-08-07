@@ -413,11 +413,11 @@ public class StackView<Model> extends FrameLayout implements StackViewAdapter.Ca
         }
 
         if (changed && !mAwaitingFirstLayout) {// Fix view display issue after orientation changed.
-            float scroll = mStackScroller.getStackScroll();
-            mStackScroller.setStackScrollToInitialState();
-            if (scroll > mLayoutAlgorithm.mMaxScrollP) {
-                scroll = mLayoutAlgorithm.mMaxScrollP;
-            }
+            float scroll = mStackScroller.getStackScroll();// record StackScroll
+            mStackScroller.setStackScrollToInitialState();// init StackScroll
+            // check if out of scroll bounds
+            scroll = Math.max(Math.min(scroll, mLayoutAlgorithm.mMaxScrollP), mLayoutAlgorithm.mMinScrollP);
+            // animate scroll for refreshing view states
             mStackScroller.animateScroll(scroll, scroll);
         }
     }

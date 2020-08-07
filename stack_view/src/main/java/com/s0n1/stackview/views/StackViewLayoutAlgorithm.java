@@ -65,12 +65,14 @@ class StackViewLayoutAlgorithm {
         int heightPadding = mConfig.taskStackTopPaddingPx;
         mStackRect.inset(widthPadding, heightPadding);
 
+        int bottomInsetPx = mConfig.taskStackBottomInsetPx;
+
         // Compute the task rect
         int width = mStackRect.width();
         int height = mStackRect.height();
         int left = mStackRect.left + (mStackRect.width() - width) / 2;
         mTaskRect.set(left, mStackRect.top,
-                left + width, mStackRect.top + height);
+                left + width, mStackRect.top + height - bottomInsetPx);
 
         // Update the affiliation offsets
         //这里设置cardview之间的各种参数

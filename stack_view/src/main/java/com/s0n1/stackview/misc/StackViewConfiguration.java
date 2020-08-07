@@ -31,6 +31,8 @@ public class StackViewConfiguration {
     public float taskStackWidthPaddingPct;
     public float taskStackOverscrollPct;
 
+    public int taskStackBottomInsetPx;
+
     public int taskViewTranslationZMinPx;
     public int taskViewTranslationZMaxPx;
 
@@ -70,6 +72,8 @@ public class StackViewConfiguration {
         taskStackOverscrollPct = stackOverscrollPctValue.getFloat();
 
         taskStackTopPaddingPx = res.getDimensionPixelSize(R.dimen.recents_stack_top_padding);
+        if (taskStackTopPaddingPx == 0)
+            taskStackBottomInsetPx = res.getDimensionPixelSize(R.dimen.recents_stack_bottom_inset);
 
         // Task view animation and styles
         taskViewTranslationZMinPx = res.getDimensionPixelSize(R.dimen.recents_task_view_z_min);

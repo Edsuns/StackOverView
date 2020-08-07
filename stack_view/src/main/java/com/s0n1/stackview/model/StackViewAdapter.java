@@ -66,7 +66,7 @@ public abstract class StackViewAdapter<Model> {
 
     public void notifyDataChange(Model newItem, int position) {
         mItems.remove(position);
-        mItems.add(newItem);
+        mItems.add(position, newItem);
 
         if (mCallback != null) {
             // Notify

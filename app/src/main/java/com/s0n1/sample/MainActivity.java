@@ -45,10 +45,6 @@ public class MainActivity extends Activity implements StackView.OnDismissedListe
         stackView = findViewById(R.id.recents_view);
         stackView.setCallback(this);
 
-        stackView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-
         models = new ArrayList<>();
         for (int i = 0; i < 10; ++i) {
             models.add(randomColor());
