@@ -36,7 +36,9 @@ class StackViewLayoutAlgorithm {
     private static final int PrecisionSteps = 250;
 
     // 最底部的卡片被挡住的区域 (0f to 0.7f)
-    private static final float SCROLL_HIDED_BOTTOM_RATE = 0.4f;
+    // changing value may against to mConfig.taskStackBottomInsetPx
+    // Test: Make 2 stack card on phone landscape, check if can over slide up
+    private static final float SCROLL_HIDED_BOTTOM_RATE = 0.46f;
 
     //xp[PrecisionSteps] 这个是每段x的平均渐进累加值，与弧度渐进值的靠近比率。也就是说会越来越快
     private static float[] xp;
